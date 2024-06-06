@@ -13,7 +13,7 @@ Point of Sale and Inventory Management System for [business/company]
 ## Requirements
 
 - Nodejs
-- `.env` is needed in api folder directory
+- `.env` is needed in api folder directory --> for members, contact me for `.env`
 - `npm i [dependencies]` see in `package.json`
 
 ## Usage
