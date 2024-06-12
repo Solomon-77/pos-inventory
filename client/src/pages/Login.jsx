@@ -8,11 +8,13 @@ const Login = () => {
    const [name, setName] = useState('');
    const [password, setPassword] = useState('');
    const [error, setError] = useState('');
+   const [loading, setLoading] = useState(false);
 
    const navigate = useNavigate();
 
    const handleLogin = async (e) => {
       e.preventDefault();
+      setLoading(true);
 
       try {
          const response = await fetch(`${URL}/login`, {
@@ -32,6 +34,8 @@ const Login = () => {
          window.location.reload();
       } catch (err) {
          setError(err.message);
+      } finally {
+         setLoading(false);
       }
    };
 
@@ -57,7 +61,13 @@ const Login = () => {
             onChange={(e) => setPassword(e.target.value)}
             className="mb-5 border border-gray-400 rounded-md px-3 py-2 text-sm mt-2"
          />
-         <button className="mb-2 bg-gray-800 hover:bg-gray-700 text-white rounded-md py-3 text-sm">Sign in</button>
+         <button
+            type="submit"
+            className={`mb-2 bg-gray-800 hover:bg-gray-700 text-white rounded-md py-3 text-sm ${loading ? 'cursor-not-allowed' : ''}`}
+            disabled={loading}
+         >
+            {loading ? 'Signing in...' : 'Sign in'}
+         </button>
          <div className="flex justify-between">
             <Link to="/signup" className="text-sm hover:underline">Don't have an account? Sign up</Link>
             <Link to="/forgot-password" className="text-sm hover:underline">Forgot Password?</Link>
