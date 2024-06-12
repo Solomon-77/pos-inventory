@@ -28,7 +28,8 @@ const Login = () => {
          const { token } = data;
          localStorage.setItem('token', token);
 
-         navigate('/');
+         navigate('/dashboard');
+         window.location.reload();
       } catch (err) {
          setError(err.message);
       }
