@@ -5,7 +5,7 @@ const URL = import.meta.env.VITE_API_URL;
 
 const Login = () => {
 
-   const [name, setEmail] = useState('');
+   const [name, setName] = useState('');
    const [password, setPassword] = useState('');
    const [error, setError] = useState('');
 
@@ -44,7 +44,7 @@ const Login = () => {
             placeholder="Your Name"
             value={name}
             required
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => setName(e.target.value)}
             className="mb-4 border border-gray-400 rounded-md px-3 py-2 text-sm mt-2"
          />
          <h1 className="text-sm font-semibold">Password</h1>
