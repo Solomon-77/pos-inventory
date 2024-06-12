@@ -1,5 +1,3 @@
-// passwordController.js
-
 const argon2 = require("argon2");
 const nodemailer = require("nodemailer");
 const User = require("../model/User");

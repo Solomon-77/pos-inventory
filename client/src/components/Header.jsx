@@ -34,7 +34,6 @@ const Header = ({ toggle, setToggle }) => {
                <h1 className="font-bold text-lg">{currentPathName}</h1>
             </div>
             <div className="bg-white flex items-center px-3 py-2 rounded-lg shadow-md">
-               <div className="h-9 w-9 bg-gray-400 rounded-full mr-3"></div>
                <div className="text-sm">
                   <h1 className='font-semibold'>{userInfo.username}</h1>
                   <h1 className='text-gray-500'>{userInfo.role}</h1>

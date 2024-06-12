@@ -12,7 +12,7 @@ const ForgotPassword = () => {
 
    const handleResetClick = async () => {
       setLoading(true);
-      setError(""); // Clear any previous error messages
+      setError("");
       try {
          const response = await fetch(`${URL}/request-password-reset`, {
             method: "POST",
@@ -22,16 +22,14 @@ const ForgotPassword = () => {
             body: JSON.stringify({ email }),
          });
 
-         const result = await response.json(); // Parse the response JSON
+         const result = await response.json();
 
          if (response.ok) {
             setIsResetClicked(true);
          } else {
-            // Handle error
             setError(result.error || "Failed to send reset code");
          }
       } catch (error) {
-         // Handle error
          setError("An error occurred");
       } finally {
          setLoading(false);

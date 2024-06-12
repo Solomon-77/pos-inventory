@@ -2,16 +2,15 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 const URL = import.meta.env.VITE_API_URL;
+
 const Login = () => {
-   // State to manage email and password
+
    const [email, setEmail] = useState('');
    const [password, setPassword] = useState('');
    const [error, setError] = useState('');
 
-   // useNavigate hook to navigate programmatically
    const navigate = useNavigate();
 
-   // Handle form submission
    const handleLogin = async (e) => {
       e.preventDefault();
 
@@ -25,16 +24,10 @@ const Login = () => {
          });
 
          const data = await response.json();
-
          if (!response.ok) throw new Error(data.error || 'Failed to login');
-
-         // Assuming token is returned in response
          const { token } = data;
-
-         // Store the token in local storage or state management
          localStorage.setItem('token', token);
 
-         // Navigate to the home page
          navigate('/');
       } catch (err) {
          setError(err.message);
