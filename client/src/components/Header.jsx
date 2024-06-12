@@ -1,19 +1,30 @@
 import { Outlet, useLocation } from 'react-router-dom';
 import { IoMdMenu } from "react-icons/io";
-import PropTypes from "prop-types"
+import PropTypes from "prop-types";
+import { jwtDecode } from "jwt-decode";
+import { useState, useEffect } from "react";
 
 const Header = ({ toggle, setToggle }) => {
-
    const location = useLocation();
    const pathNames = {
-      "/": "Dashboard",
+      "/dashboard": "Dashboard",
       "/pos": "Point of Sale",
       "/inventory": "Inventory",
       "/sales": "Sales",
       "/settings": "Settings"
    };
 
-   const currentPathName = pathNames[location.pathname]
+   const currentPathName = pathNames[location.pathname];
+
+   const [userInfo, setUserInfo] = useState({ username: '', role: '' });
+
+   useEffect(() => {
+      const token = localStorage.getItem('token');
+      if (token) {
+         const decodedToken = jwtDecode(token);
+         setUserInfo({ username: decodedToken.username, role: decodedToken.role });
+      }
+   }, []);
 
    return (
       <div className="grid grid-rows-[auto,1fr] p-4 overflow-auto">
@@ -23,10 +34,10 @@ const Header = ({ toggle, setToggle }) => {
                <h1 className="font-bold text-lg">{currentPathName}</h1>
             </div>
             <div className="bg-white flex items-center px-3 py-2 rounded-lg shadow-md">
-               <div className="h-9 w-9 bg-black rounded-full mr-3"></div>
+               <div className="h-9 w-9 bg-gray-400 rounded-full mr-3"></div>
                <div className="text-sm">
-                  <h1 className='font-semibold'>Username</h1>
-                  <h1 className='text-neutral-500'>Cashier</h1>
+                  <h1 className='font-semibold'>{userInfo.username}</h1>
+                  <h1 className='text-gray-500'>{userInfo.role}</h1>
                </div>
             </div>
          </nav>

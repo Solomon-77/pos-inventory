@@ -14,7 +14,7 @@ const MainScreen = () => {
    }
 
    return (
-      <div className="h-screen bg-neutral-200 grid grid-cols-1 md:grid-cols-[250px_1fr]">
+      <div className="h-screen bg-gray-200 grid grid-cols-1 md:grid-cols-[250px_1fr]">
          <SideNav toggle={toggle} setToggle={setToggle} />
          <Header toggle={toggle} setToggle={setToggle} />
       </div>

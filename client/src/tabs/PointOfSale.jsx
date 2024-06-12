@@ -23,7 +23,7 @@ const PointOfSale = () => {
    const getTabClass = (tab) => {
       return `cursor-pointer duration-100 ease-out shadow-md rounded-full px-4 py-1 
          ${component === tab
-            ? "bg-neutral-600 text-white"
+            ? "bg-gray-600 text-white"
             : "bg-white"}`;
    };
 
@@ -49,7 +49,7 @@ const PointOfSale = () => {
                <div className="flex justify-between items-center">
                   <div>
                      <h1 className="font-semibold">Cannabis</h1>
-                     <h1 className="text-sm text-neutral-500">$20</h1>
+                     <h1 className="text-sm text-gray-500">$20</h1>
                   </div>
                   <div className="flex items-center space-x-3">
                      <button>-</button>
@@ -63,7 +63,7 @@ const PointOfSale = () => {
                   <h1>Total</h1>
                   <h1>$20.0</h1>
                </div>
-               <button className="w-full bg-neutral-900 font-medium text-white rounded-md text-sm py-2">Checkout</button>
+               <button className="w-full bg-gray-900 font-medium text-white rounded-md text-sm py-2">Checkout</button>
             </div>
          </div>
       </div>

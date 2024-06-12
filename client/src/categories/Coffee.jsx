@@ -10,8 +10,8 @@ const Coffee = () => {
                      <h1 className="font-semibold">{item.name}</h1>
                      <h1 className="font-bold">${item.price}</h1>
                   </div>
-                  <h1 className="text-center my-4 text-sm text-neutral-500">{item.description}</h1>
-                  <button className="py-2 rounded-md bg-neutral-800 text-white text-sm font-medium">Add to Cart</button>
+                  <h1 className="text-center my-4 text-sm text-gray-500">{item.description}</h1>
+                  <button className="py-2 rounded-md bg-gray-800 text-white text-sm font-medium">Add to Cart</button>
                </div>
             ))}
          </div>

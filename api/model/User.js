@@ -20,17 +20,10 @@ const userSchema = new Schema({
       type: String,
       enum: ["admin", "cashier"],
       required: true
-   },
-   resetPasswordToken: { // passwordController.js
-      type: String
-   },
-   resetPasswordExpires: {
-      type: Date
    }
 }, {
    versionKey: false
 });
 
 const User = model("User", userSchema);
-
 module.exports = User;

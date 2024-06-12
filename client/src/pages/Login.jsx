@@ -1,27 +1,74 @@
-import { Link } from "react-router-dom"
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
+   // State to manage email and password
+   const [email, setEmail] = useState('');
+   const [password, setPassword] = useState('');
+   const [error, setError] = useState('');
+
+   // useNavigate hook to navigate programmatically
+   const navigate = useNavigate();
+
+   // Handle form submission
+   const handleLogin = async (e) => {
+      e.preventDefault();
+
+      try {
+         const response = await fetch(`http://localhost:5500/login`, {
+            method: 'POST',
+            headers: {
+               'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username: email, password }),
+         });
+
+         const data = await response.json();
+
+         if (!response.ok) throw new Error(data.error || 'Failed to login');
+
+         // Assuming token is returned in response
+         const { token } = data;
+
+         // Store the token in local storage or state management
+         localStorage.setItem('token', token);
+
+         // Navigate to the home page
+         navigate('/');
+      } catch (err) {
+         setError(err.message);
+      }
+   };
+
    return (
-      <form action="" className="flex flex-col w-full max-w-[360px]">
-         <h1 className="text-3xl font-semibold mb-5">Sign in</h1>
-         <h1>Email</h1>
+      <form onSubmit={handleLogin} className="flex flex-col w-full max-w-[360px]">
+         <h1 className="text-3xl font-semibold mb-4">Sign in</h1>
+         {error && <p className="text-red-500 mb-4 text-sm font-semibold">{error}</p>}
+         <h1 className="text-sm font-semibold">Username</h1>
          <input
             type="text"
-            placeholder="user@email.com"
-            className="mb-4 border border-neutral-400 rounded-md px-3 py-2 text-sm mt-1"
+            placeholder="Your Name"
+            value={email}
+            required
+            onChange={(e) => setEmail(e.target.value)}
+            className="mb-4 border border-gray-400 rounded-md px-3 py-2 text-sm mt-2"
          />
-         <h1>Password</h1>
+         <h1 className="text-sm font-semibold">Password</h1>
          <input
             type="password"
-            className="mb-5 border border-neutral-400 rounded-md px-3 py-2 text-sm mt-1"
+            placeholder="Password"
+            value={password}
+            required
+            onChange={(e) => setPassword(e.target.value)}
+            className="mb-5 border border-gray-400 rounded-md px-3 py-2 text-sm mt-2"
          />
-         <button className="mb-2 bg-neutral-900 hover:bg-neutral-800 text-white rounded-md py-3 text-sm">Sign in</button>
+         <button className="mb-2 bg-gray-800 hover:bg-gray-700 text-white rounded-md py-3 text-sm">Sign in</button>
          <div className="flex justify-between">
             <Link to="/signup" className="text-sm hover:underline">Don't have an account? Sign up</Link>
-            <Link className="text-sm hover:underline">Forgot Password?</Link>
+            <Link to="/forgot-password" className="text-sm hover:underline">Forgot Password?</Link>
          </div>
       </form>
-   )
-}
+   );
+};
 
-export default Login
+export default Login;

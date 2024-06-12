@@ -1,36 +1,104 @@
 const argon2 = require("argon2");
 const User = require("../model/User");
 const jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
+const VerificationCode = require("../model/VerificationCode");
+
+const transporter = nodemailer.createTransport({
+   service: "Gmail",
+   auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+   },
+});
 
 const ROLE_CODES = {
-   ADMIN100: "admin",
-   CASHIER405: "cashier",
+   [process.env.ADMIN_ROLE_CODE]: "admin",
+   [process.env.CASHIER_ROLE_CODE]: "cashier",
+};
+
+const generateVerificationCode = () =>
+   Math.floor(100000 + Math.random() * 900000).toString();
+
+const sendVerificationCode = async (email, code) => {
+   try {
+      await transporter.sendMail({
+         from: process.env.EMAIL_USER,
+         to: email,
+         subject: "Email Verification Code",
+         html: `Your verification code is: <b>${code}</b>`,
+      });
+   } catch (error) {
+      console.error("Error sending verification code:", error);
+   }
+};
+
+const validateEmail = (email) =>
+   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+const validatePassword = (password) => {
+   const minLength = 8;
+   const hasUpperCase = /[A-Z]/.test(password);
+   const hasLowerCase = /[a-z]/.test(password);
+   const hasDigit = /\d/.test(password);
+   const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+   if (password.length < minLength) return `Password must be at least ${minLength} characters long.`;
+   if (!hasUpperCase) return "Password must contain at least one uppercase letter.";
+   if (!hasLowerCase) return "Password must contain at least one lowercase letter.";
+   if (!hasDigit) return "Password must contain at least one digit.";
+   if (!hasSpecialChar) return "Password must contain at least one special character.";
+
+   return null;
 };
 
 const register = async (req, res) => {
-   const { username, password, email, roleCode } = req.body;
+   const { username, email, password, roleCode } = req.body;
+
+   if (!validateEmail(email)) return res.status(400).json({ error: "Invalid email format" });
+
+   const passwordError = validatePassword(password);
+   if (passwordError) return res.status(400).json({ error: passwordError });
 
    try {
-      const userExists = await User.exists({ username });
-      if (userExists) return res.status(400).json({ error: "Username already taken" });
-
-      const emailExists = await User.exists({ email });
-      if (emailExists) return res.status(400).json({ error: "Email already taken" });
-
-      const hashedPassword = await argon2.hash(password);
+      if (await User.exists({ $or: [{ username }, { email }] })) {
+         return res.status(400).json({ error: "Username or email already taken" });
+      }
 
       const role = ROLE_CODES[roleCode];
-      if (!role) return res.status(400).json({ error: "Invalid access code" });
+      if (!role) return res.status(400).json({ error: "Invalid role code" });
 
-      const user = await User.create({
-         username,
-         password: hashedPassword,
-         email,
-         role
-      });
-      res.status(201).json({ message: "User registered successfully.", user });
+      const hashedPassword = await argon2.hash(password);
+      const verificationCode = generateVerificationCode();
+
+      await VerificationCode.create({ email, code: verificationCode, username, password: hashedPassword, roleCode });
+      await sendVerificationCode(email, verificationCode);
+
+      res.status(201).json({ message: "User registration initiated. Please verify your email." });
    } catch (err) {
-      res.status(500).json({ error: err.message });
+      res.status(500).json({ error: "Server error, please try again later." });
+   }
+};
+
+const verifyEmail = async (req, res) => {
+   const { email, code } = req.body;
+
+   if (!validateEmail(email)) return res.status(400).json({ error: "Invalid email format" });
+
+   try {
+      const verificationCode = await VerificationCode.findOne({ email, code });
+      if (!verificationCode) return res.status(400).json({ error: "Invalid or expired verification code" });
+
+      const { username, password, roleCode } = verificationCode;
+      const role = ROLE_CODES[roleCode];
+      if (!role) return res.status(400).json({ error: "Invalid role code" });
+
+      await User.create({ username, password, email, role });
+      await VerificationCode.deleteOne({ email, code });
+
+      res.status(201).json({ message: "Email verified and user registered successfully." });
+   } catch (err) {
+      res.status(500).json({ error: "Server error, please try again later." });
    }
 };
 
@@ -39,22 +107,20 @@ const login = async (req, res) => {
 
    try {
       const user = await User.findOne({ username });
-      if (!user) return res.status(401).json({ error: "Invalid credentials." });
-
-      const passwordMatch = await argon2.verify(user.password, password);
-      if (!passwordMatch) return res.status(401).json({ error: "Invalid credentials." });
-
-      const expirationTime = 60 * 60 * 24 * 7;
+      if (!user || !(await argon2.verify(user.password, password))) {
+         return res.status(401).json({ error: "Invalid credentials" });
+      }
 
       const token = jwt.sign(
-         { userId: user._id, role: user.role },
+         { userId: user._id, username: user.username, role: user.role },
          process.env.JWT_SECRET,
-         { expiresIn: expirationTime }
+         { expiresIn: "7d" }
       );
+
       res.status(200).json({ token });
    } catch (err) {
-      res.status(500).json({ error: err.message });
+      res.status(500).json({ error: "Server error, please try again later." });
    }
 };
 
-module.exports = { register, login };
+module.exports = { register, verifyEmail, login };
