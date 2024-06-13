@@ -1,7 +1,7 @@
 const argon2 = require("argon2");
-const User = require("../model/User");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
+const User = require("../model/User");
 const VerificationCode = require("../model/VerificationCode");
 
 const transporter = nodemailer.createTransport({
@@ -61,9 +61,8 @@ const register = async (req, res) => {
    if (passwordError) return res.status(400).json({ error: passwordError });
 
    try {
-      if (await User.exists({ $or: [{ username }, { email }] })) {
-         return res.status(400).json({ error: "Username or email already taken" });
-      }
+      const userExists = await User.exists({ $or: [{ username }, { email }] });
+      if (userExists) return res.status(400).json({ error: "Username or email already taken" });
 
       const role = ROLE_CODES[roleCode];
       if (!role) return res.status(400).json({ error: "Invalid role code" });

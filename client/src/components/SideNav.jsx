@@ -35,6 +35,7 @@ const SideNav = ({ toggle, setToggle }) => {
    };
 
    const handleLogout = () => {
+      localStorage.removeItem('hasReloaded');
       localStorage.removeItem('token'); // Remove token from localStorage
       navigate('/login'); // Navigate to login page
    };

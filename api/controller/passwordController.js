@@ -32,9 +32,7 @@ const requestPasswordReset = async (req, res) => {
 
    try {
       const userExists = await User.findOne({ email });
-      if (!userExists) {
-         return res.status(400).json({ error: "Email not found" });
-      }
+      if (!userExists) return res.status(400).json({ error: "Email not found" });
 
       const code = Math.floor(100000 + Math.random() * 900000).toString();
       const expiresAt = Date.now() + 300000; // 5 minutes

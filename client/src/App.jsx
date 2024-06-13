@@ -13,7 +13,7 @@ import { jwtDecode } from "jwt-decode";
 
 const App = () => {
    const token = localStorage.getItem("token");
-   const { role } = token ? jwtDecode(token) : { role: "user" };
+   const role = token ? jwtDecode(token)?.role : "user";
 
    return (
       <div className="font-inter">
