@@ -7,9 +7,11 @@ const VerifyEmail = ({ email }) => {
   const [verificationCode, setVerificationCode] = useState('');
   const [isVerified, setIsVerified] = useState(false);
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false); // New loading state
 
   const handleVerify = async (e) => {
     e.preventDefault();
+    setIsLoading(true); // Start loading
     try {
       const response = await fetch(`${URL}/verify-email`, {
         method: 'POST',
@@ -26,6 +28,8 @@ const VerifyEmail = ({ email }) => {
       setIsVerified(true);
     } catch (err) {
       setError(err.message);
+    } finally {
+      setIsLoading(false); // Stop loading
     }
   };
 
@@ -37,7 +41,7 @@ const VerifyEmail = ({ email }) => {
           <p className="text-center text-gray-500 font-medium my-5">
             We've sent a verification code to your email. Please enter the code below to verify your account.
           </p>
-          {error && <p className="text-red-500 mb-4">{error}</p>}
+          {error && <p className="text-red-500 mb-4 text-sm font-semibold">{error}</p>}
           <h1 className="text-sm font-semibold mb-2">Verification Code</h1>
           <input
             type="text"
@@ -45,12 +49,14 @@ const VerifyEmail = ({ email }) => {
             onChange={(e) => setVerificationCode(e.target.value)}
             placeholder="ex. 123456"
             className="border border-gray-400 rounded-md px-3 py-2 text-sm mb-5"
+            disabled={isLoading} // Disable input when loading
           />
           <button
             onClick={handleVerify}
-            className="bg-gray-900 hover:bg-gray-800 text-white font-medium rounded-md py-3 text-sm"
+            className={`bg-gray-900 hover:bg-gray-800 text-white font-medium rounded-md py-3 text-sm ${isLoading ? 'cursor-not-allowed opacity-50' : ''}`}
+            disabled={isLoading} // Disable button when loading
           >
-            Verify
+            {isLoading ? 'Verifying...' : 'Verify'} {/* Show loading text */}
           </button>
         </div>
       ) : (
