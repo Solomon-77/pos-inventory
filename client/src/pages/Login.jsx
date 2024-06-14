@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 const URL = import.meta.env.VITE_API_URL;
@@ -11,14 +11,6 @@ const Login = () => {
    const [loading, setLoading] = useState(false);
 
    const navigate = useNavigate();
-
-   useEffect(() => {
-      const hasReloaded = localStorage.getItem('hasReloaded');
-      if (!hasReloaded) {
-         localStorage.setItem('hasReloaded', 'true');
-         window.location.reload();
-      }
-   }, []);
 
    const handleLogin = async (e) => {
       e.preventDefault();

@@ -61,6 +61,7 @@ const register = async (req, res) => {
    if (passwordError) return res.status(400).json({ error: passwordError });
 
    try {
+      // Check if the user with the same email or username already exists
       if (await User.exists({ $or: [{ username }, { email }] })) {
          return res.status(400).json({ error: "Username or email already taken" });
       }
@@ -71,6 +72,10 @@ const register = async (req, res) => {
       const hashedPassword = await argon2.hash(password);
       const verificationCode = generateVerificationCode();
 
+      // Invalidate any previous verification codes
+      await VerificationCode.deleteMany({ email });
+
+      // Save the new verification code
       await VerificationCode.create({ email, code: verificationCode, username, password: hashedPassword, roleCode });
       await sendVerificationCode(email, verificationCode);
 
@@ -86,15 +91,18 @@ const verifyEmail = async (req, res) => {
    if (!validateEmail(email)) return res.status(400).json({ error: "Invalid email format" });
 
    try {
+      // Find the most recent verification code
       const verificationCode = await VerificationCode.findOne({ email, code });
+
       if (!verificationCode) return res.status(400).json({ error: "Invalid or expired verification code" });
 
       const { username, password, roleCode } = verificationCode;
       const role = ROLE_CODES[roleCode];
       if (!role) return res.status(400).json({ error: "Invalid role code" });
 
+      // Create the user and delete the verification code
       await User.create({ username, password, email, role });
-      await VerificationCode.deleteOne({ email, code });
+      await VerificationCode.deleteMany({ email }); // Ensure all old codes are removed
 
       res.status(201).json({ message: "Email verified and user registered successfully." });
    } catch (err) {
