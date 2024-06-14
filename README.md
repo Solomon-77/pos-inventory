@@ -20,7 +20,3 @@ Point of Sale and Inventory Management System for [business/company]
 
 - cd to client directory and run using `npm run dev`
 - cd to api directory and run using `node index.js or nodemon`
-
-## License
-
-This project is licensed under the [MIT License](LICENSE).
