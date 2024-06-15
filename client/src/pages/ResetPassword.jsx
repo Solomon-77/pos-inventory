@@ -12,6 +12,31 @@ const ResetPassword = ({ email }) => {
    const [loading, setLoading] = useState(false);
    const [error, setError] = useState("");
 
+   const handleCodeVerification = async () => {
+      setLoading(true);
+      setError(""); // Clear any previous error messages
+      try {
+         const response = await fetch(`${URL}/verify-code`, {
+            method: "POST",
+            headers: {
+               "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email, code }),
+         });
+
+         if (response.ok) {
+            setIsConfirmed(true);
+         } else {
+            const result = await response.json();
+            setError(result.error || "Invalid code");
+         }
+      } catch (error) {
+         setError("An error occurred");
+      } finally {
+         setLoading(false);
+      }
+   };
+
    const handleConfirm = async () => {
       setLoading(true);
       setError(""); // Clear any previous error messages
@@ -27,12 +52,10 @@ const ResetPassword = ({ email }) => {
          if (response.ok) {
             setIsPasswordChanged(true);
          } else {
-            // Handle error
             const result = await response.json();
             setError(result.error || "Failed to reset password");
          }
       } catch (error) {
-         // Handle error
          setError("An error occurred");
       } finally {
          setLoading(false);
@@ -95,10 +118,11 @@ const ResetPassword = ({ email }) => {
                />
                {error && <p className="text-red-500 text-sm mb-4 font-semibold">{error}</p>}
                <button
-                  onClick={() => setIsConfirmed(true)}
+                  onClick={handleCodeVerification}
                   className="bg-gray-900 hover:bg-gray-800 text-white font-medium rounded-md py-3 text-sm"
+                  disabled={loading}
                >
-                  Confirm
+                  {loading ? "Confirming..." : "Confirm"}
                </button>
             </>
          )}

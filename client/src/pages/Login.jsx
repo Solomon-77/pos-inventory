@@ -4,8 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 const URL = import.meta.env.VITE_API_URL;
 
 const Login = () => {
-
-   const [name, setName] = useState('');
+   const [email, setEmail] = useState('');
    const [password, setPassword] = useState('');
    const [error, setError] = useState('');
    const [loading, setLoading] = useState(false);
@@ -22,7 +21,7 @@ const Login = () => {
             headers: {
                'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ username: name, password }),
+            body: JSON.stringify({ email, password }),
          });
 
          const data = await response.json();
@@ -43,13 +42,13 @@ const Login = () => {
       <form onSubmit={handleLogin} className="flex flex-col w-full max-w-[360px]">
          <h1 className="text-3xl font-semibold mb-4">Sign in</h1>
          {error && <p className="text-red-500 mb-4 text-sm font-semibold">{error}</p>}
-         <h1 className="text-sm font-semibold">Username</h1>
+         <h1 className="text-sm font-semibold">Email</h1>
          <input
             type="text"
-            placeholder="Your Name"
-            value={name}
+            placeholder="user@gmail.com"
+            value={email}
             required
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
             className="mb-4 border border-gray-400 rounded-md px-3 py-2 text-sm mt-2"
          />
          <h1 className="text-sm font-semibold">Password</h1>

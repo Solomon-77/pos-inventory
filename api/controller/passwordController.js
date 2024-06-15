@@ -58,6 +58,21 @@ const requestPasswordReset = async (req, res) => {
    }
 };
 
+const verifyCode = async (req, res) => {
+   const { email, code } = req.body;
+
+   try {
+      const resetToken = await PasswordReset.findOne({ email, code });
+      if (!resetToken || resetToken.expiresAt < Date.now()) {
+         return res.status(400).json({ error: "Invalid or expired reset code" });
+      }
+
+      res.status(200).json({ message: "Reset code is valid" });
+   } catch (err) {
+      res.status(500).json({ error: "Server error" });
+   }
+};
+
 const resetPassword = async (req, res) => {
    const { email, code, newPassword } = req.body;
 
@@ -80,4 +95,4 @@ const resetPassword = async (req, res) => {
    }
 };
 
-module.exports = { requestPasswordReset, resetPassword };
+module.exports = { requestPasswordReset, resetPassword, verifyCode };
