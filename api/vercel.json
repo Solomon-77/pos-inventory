@@ -10,5 +10,8 @@
          "source": "/(.*)",
          "destination": "/"
       }
+   ],
+   "regions": [
+      "hkg1"
    ]
 }
