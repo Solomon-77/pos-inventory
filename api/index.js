@@ -29,8 +29,8 @@ function randomInterval(min, max) {
 
 function pingServer() {
    axios.get(process.env.KEEP_WARM_DOMAIN)
-      .then(response => console.log('Server self-pinged successfully'))
-      .catch(error => console.error('Error self-pinging server:', error));
+      .then(() => console.log("Server self-pinged successfully"))
+      .catch(err => console.error("Error self-pinging server:", err));
 
    const nextInterval = randomInterval(210000, 300000);
    setTimeout(pingServer, nextInterval);
