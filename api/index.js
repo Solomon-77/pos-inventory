@@ -2,7 +2,6 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
-const axios = require('axios');
 const app = express();
 
 app.use(cors({
@@ -18,23 +17,7 @@ app.get("/", (req, res) => {
 
 app.get("/keep-warm", (req, res) => {
    res.status(200).send("OK");
-
-   const nextInterval = randomInterval(210000, 300000);
-   setTimeout(pingServer, nextInterval);
 });
-
-function randomInterval(min, max) {
-   return Math.floor(Math.random() * (max - min + 1) + min);
-}
-
-function pingServer() {
-   axios.get(process.env.KEEP_WARM_DOMAIN)
-      .then(() => console.log("Server self-pinged successfully"))
-      .catch(err => console.error("Error self-pinging server:", err));
-
-   const nextInterval = randomInterval(210000, 300000);
-   setTimeout(pingServer, nextInterval);
-}
 
 mongoose.connect(process.env.MONGODB_URI)
    .then(() => console.log("MongoDB Connected."))
