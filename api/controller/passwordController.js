@@ -46,7 +46,7 @@ const requestPasswordReset = async (req, res) => {
       );
 
       await transporter.sendMail({
-         from: "Medinet System" + process.env.EMAIL_USER,
+         from: `Medinet System ${process.env.EMAIL_USER}`,
          to: email,
          subject: "Password Reset",
          html: `Your password reset code is: <b>${code}</b>`,
