@@ -23,7 +23,7 @@ const generateVerificationCode = () =>
 const sendVerificationCode = async (email, code) => {
    try {
       await transporter.sendMail({
-         from: `Medinet System ${process.env.EMAIL_USER}`,
+         from: `Medinet Support ${process.env.EMAIL_USER}`,
          to: email,
          subject: "Email Verification Code",
          html: `Your verification code is: <b>${code}</b>`,
