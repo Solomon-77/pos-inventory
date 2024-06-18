@@ -19,9 +19,17 @@ app.get("/keep-warm", (req, res) => {
    res.status(200).send("OK");
 });
 
-mongoose.connect(process.env.MONGODB_URI)
-   .then(() => console.log("MongoDB Connected."))
-   .catch(err => console.log("MongoDB Connection Error: ", err));
+const connectWithRetry = () => {
+   mongoose.connect(process.env.MONGODB_URI)
+      .then(() => console.log("MongoDB Connected."))
+      .catch(err => {
+         console.log("MongoDB Connection Error: ", err);
+         console.log("Retrying in 1 second...");
+         setTimeout(connectWithRetry, 300);
+      });
+};
+
+connectWithRetry();
 
 const route = require("./routes/authRoute");
 app.use(route);
