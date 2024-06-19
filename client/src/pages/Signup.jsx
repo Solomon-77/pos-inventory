@@ -52,7 +52,7 @@ const Signup = () => {
    };
 
    return (
-      <div className="flex flex-col items-center w-full max-w-[360px]">
+      <div className="     flex-col items-center w-full max-w-[360px]">
          {!isSignedUp ? (
             <form onSubmit={handleSignup} className="flex flex-col w-full">
                <h1 className="text-3xl font-semibold mb-4">Sign up</h1>

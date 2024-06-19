@@ -61,21 +61,12 @@ const register = async (req, res) => {
    if (passwordError) return res.status(400).json({ error: passwordError });
 
    try {
-      // Check if the user with the same email or username already exists
-      if (await User.exists({ $or: [{ username }, { email }] })) {
-         return res.status(400).json({ error: "Username or email already taken" });
-      }
-
-      const role = ROLE_CODES[roleCode];
-      if (!role) return res.status(400).json({ error: "Invalid role code" });
+      const existingUser = await User.exists({ email });
+      if (existingUser) return res.status(400).json({ error: "Email already taken" });
 
       const hashedPassword = await argon2.hash(password);
       const verificationCode = generateVerificationCode();
 
-      // Invalidate any previous verification codes
-      await VerificationCode.deleteMany({ email });
-
-      // Save the new verification code
       await VerificationCode.create({ email, code: verificationCode, username, password: hashedPassword, roleCode });
       await sendVerificationCode(email, verificationCode);
 

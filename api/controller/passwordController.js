@@ -31,7 +31,7 @@ const requestPasswordReset = async (req, res) => {
    const { email } = req.body;
 
    try {
-      const userExists = await User.findOne({ email });
+      const userExists = await User.exists({ email });
       if (!userExists) {
          return res.status(400).json({ error: "Email not found" });
       }
