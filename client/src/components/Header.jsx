@@ -11,6 +11,9 @@ const Header = ({ toggle, setToggle }) => {
       "/pos": "Point of Sale",
       "/inventory": "Inventory",
       "/sales": "Sales",
+      "/maintenance": "Maintenance",
+      "/help": "Help",
+      "/about": "About",
       "/settings": "Settings"
    };
 

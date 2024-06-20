@@ -10,6 +10,9 @@ import Sales from "./tabs/Sales";
 import Settings from "./tabs/Settings";
 import ForgotPassword from "./pages/ForgotPassword";
 import { jwtDecode } from "jwt-decode";
+import Maintenance from "./tabs/Maintenance";
+import Help from "./tabs/Help";
+import About from "./tabs/About";
 
 const App = () => {
    const token = localStorage.getItem("token");
@@ -25,12 +28,15 @@ const App = () => {
                   <Route path="/forgot-password" element={<AuthRedirect><ForgotPassword /></AuthRedirect>} />
                </Route>
 
-               <Route element={<ProtectedRoute />}>
+               <Route element={<ProtectedRoute role={role} />}>
                   <Route element={<MainScreen />}>
                      <Route path="/dashboard" element={<Dashboard />} />
-                     <Route path="/pos" element={<PointOfSale />} />
+                     {role === "cashier" && <Route path="/pos" element={<PointOfSale />} />}
                      {role === "admin" && <Route path="/inventory" element={<Inventory />} />}
                      <Route path="/sales" element={<Sales />} />
+                     {role === "admin" && <Route path="/maintenance" element={<Maintenance />} />}
+                     <Route path="/help" element={<Help />} />
+                     <Route path="/about" element={<About />} />
                      <Route path="/settings" element={<Settings />} />
                      <Route index element={<Navigate to="/dashboard" replace />} />
                   </Route>
@@ -47,9 +53,9 @@ const AuthRedirect = ({ children }) => {
    return token ? <Navigate to="/dashboard" replace /> : children;
 };
 
-const ProtectedRoute = () => {
+const ProtectedRoute = ({ role }) => {
    const token = localStorage.getItem("token");
-   return token ? <Outlet /> : <Navigate to="/login" replace />;
+   return token ? <Outlet context={{ role }} /> : <Navigate to="/login" replace />;
 };
 
 export default App;

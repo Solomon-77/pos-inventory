@@ -3,6 +3,9 @@ import { FiHome } from "react-icons/fi";
 import { MdOutlineDashboard, MdOutlineInventory2 } from "react-icons/md";
 import { TbProgressAlert } from "react-icons/tb";
 import { IoSettingsOutline } from "react-icons/io5";
+import { GrVmMaintenance } from "react-icons/gr";
+import { IoMdHelpCircleOutline } from "react-icons/io";
+import { IoMdInformationCircleOutline } from "react-icons/io";
 import { BiLogOut } from "react-icons/bi";
 import { IoMdClose } from "react-icons/io";
 import PropTypes from "prop-types";
@@ -51,9 +54,11 @@ const SideNav = ({ toggle, setToggle }) => {
                <Link onClick={close} to="/dashboard" className={`${isActive("/dashboard")} ${style}`}>
                   <FiHome className="mr-3" />Dashboard
                </Link>
-               <Link onClick={close} to="/pos" className={`${isActive("/pos")} ${style}`}>
-                  <MdOutlineDashboard className="mr-3" />Point of Sale
-               </Link>
+               {userRole === "cashier" && (
+                  <Link onClick={close} to="/pos" className={`${isActive("/pos")} ${style}`}>
+                     <MdOutlineDashboard className="mr-3" />Point of Sale
+                  </Link>
+               )}
                {userRole === "admin" && (
                   <Link onClick={close} to="/inventory" className={`${isActive("/inventory")} ${style}`}>
                      <MdOutlineInventory2 className="mr-3" />Inventory
@@ -61,6 +66,17 @@ const SideNav = ({ toggle, setToggle }) => {
                )}
                <Link onClick={close} to="/sales" className={`${isActive("/sales")} ${style}`}>
                   <TbProgressAlert className="mr-3" />Sales
+               </Link>
+               {userRole === "admin" && (
+                  <Link onClick={close} to="/maintenance" className={`${isActive("/maintenance")} ${style}`}>
+                     <GrVmMaintenance className="mr-3" />Maintenance
+                  </Link>
+               )}
+               <Link onClick={close} to="/help" className={`${isActive("/help")} ${style}`}>
+                  <IoMdHelpCircleOutline className="mr-3" />Help
+               </Link>
+               <Link onClick={close} to="/about" className={`${isActive("/about")} ${style}`}>
+                  <IoMdInformationCircleOutline className="mr-3" />About
                </Link>
                <Link onClick={close} to="/settings" className={`${isActive("/settings")} ${style}`}>
                   <IoSettingsOutline className="mr-3" />Settings
