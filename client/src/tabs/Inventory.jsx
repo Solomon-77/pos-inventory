@@ -2,6 +2,8 @@ import { IoSearchOutline } from "react-icons/io5";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
+const URL = import.meta.env.VITE_API_URL;
+
 const Inventory = () => {
    const [isOpen, setIsOpen] = useState(false);
    const [searchQuery, setSearchQuery] = useState("");
@@ -11,7 +13,7 @@ const Inventory = () => {
    useEffect(() => {
       const fetchData = async () => {
          try {
-            const response = await axios.get("http://localhost:5500/getAll");
+            const response = await axios.get(`${URL}/getAll`);
             const combinedData = {
                ...response.data,
                syrup: [...(response.data.syrup || []), ...(response.data.syrup2 || [])],
