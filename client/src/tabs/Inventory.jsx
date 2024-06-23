@@ -63,15 +63,6 @@ const Inventory = () => {
          : []
    );
 
-   const InputField = ({ value, onChange, type = "text" }) => (
-      <input type={type} value={value} onChange={(e) => onChange(e.target.value)} className="w-full p-1 border rounded" />
-   );
-
-   const TableCell = ({ isEditing, editValue, itemValue, onChange, type = "text", field }) => (
-      isEditing ? <InputField value={editValue} onChange={onChange} type={type} /> :
-         (type === "number" && field === "price" ? `P${itemValue}` : itemValue)
-   );
-
    return (
       <div>
          <div className="md:flex justify-between items-center">
@@ -105,16 +96,17 @@ const Inventory = () => {
          </div>
 
          {showAddForm && (
-            <div className="mt-4 p-6 bg-gray-100 rounded-md shadow-md">
-               <h3 className="text-lg font-semibold mb-4">Add New Product</h3>
-               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="mt-4 p-5 bg-gray-100 rounded-md shadow-md">
+               <h3 className="text-lg font-semibold mb-2">Add New Product</h3>
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {["name", "price", "quantity"].map(field => (
                      <div key={field}>
                         <label className="block text-sm font-medium text-gray-700 mb-1">{field.charAt(0).toUpperCase() + field.slice(1)}</label>
-                        <InputField
-                           value={newProduct[field]}
-                           onChange={(value) => setNewProduct({ ...newProduct, [field]: value })}
+                        <input
                            type={field !== "name" ? "number" : "text"}
+                           value={newProduct[field]}
+                           onChange={(e) => setNewProduct({ ...newProduct, [field]: e.target.value })}
+                           className="w-full p-1 border rounded outline-none px-3 text-sm py-2"
                         />
                      </div>
                   ))}
@@ -133,7 +125,7 @@ const Inventory = () => {
                   </div>
                </div>
                <div className="mt-4 flex justify-end">
-                  <button onClick={addProduct} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition duration-300 ease-in-out">Add Product</button>
+                  <button onClick={addProduct} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition duration-300 ease-in-out text-sm">Add Product</button>
                </div>
             </div>
          )}
@@ -152,14 +144,16 @@ const Inventory = () => {
                      <tr className="text-center" key={index}>
                         {["name", "price", "quantity"].map(field => (
                            <td key={field} className="border border-gray-200 py-4 break-words px-4 max-w-[100px] text-sm">
-                              <TableCell
-                                 isEditing={editProduct?._id === product._id}
-                                 editValue={editProduct?.[field]}
-                                 itemValue={product[field]}
-                                 onChange={(value) => setEditProduct({ ...editProduct, [field]: value })}
-                                 type={field !== "name" ? "number" : "text"}
-                                 field={field}
-                              />
+                              {editProduct?._id === product._id ? (
+                                 <input
+                                    type={field !== "name" ? "number" : "text"}
+                                    value={editProduct[field]}
+                                    onChange={(e) => setEditProduct({ ...editProduct, [field]: e.target.value })}
+                                    className="w-full p-1 border rounded outline-none px-3 text-sm py-2"
+                                 />
+                              ) : (
+                                 field === "price" ? `P${product[field]}` : product[field]
+                              )}
                            </td>
                         ))}
                         <td className="border border-gray-200 py-4">
