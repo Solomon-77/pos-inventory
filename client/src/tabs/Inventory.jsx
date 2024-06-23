@@ -2,52 +2,75 @@ import { IoSearchOutline } from "react-icons/io5";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-const URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL;
+const CATEGORIES = ["All", "Generic", "Branded", "Syrup", "Antibiotics", "OintmentDrops", "Cosmetics", "Diapers", "Others"];
 
 const Inventory = () => {
-   const [isOpen, setIsOpen] = useState(false);
-   const [searchQuery, setSearchQuery] = useState("");
-   const [data, setData] = useState({});
-   const [selectedCategory, setSelectedCategory] = useState("All");
+   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+   const [search, setSearch] = useState("");
+   const [products, setProducts] = useState({});
+   const [category, setCategory] = useState("All");
+   const [editProduct, setEditProduct] = useState(null);
+   const [newProduct, setNewProduct] = useState({ name: "", price: "", quantity: "", category: "" });
+   const [showAddForm, setShowAddForm] = useState(false);
 
    useEffect(() => {
-      const fetchData = async () => {
-         try {
-            const response = await axios.get(`${URL}/getAll`);
-            const combinedData = {
-               ...response.data,
-               syrup: [...(response.data.syrup || []), ...(response.data.syrup2 || [])],
-            };
-            delete combinedData.syrup2;
-            setData(combinedData);
-         } catch (error) {
-            console.error("Error fetching data:", error);
-         }
-      };
-
-      fetchData();
+      fetchProducts();
    }, []);
 
-   const categories = [
-      "All",
-      "Generic",
-      "Branded",
-      "Syrup",
-      "Antibiotics",
-      "OintmentDrops",
-      "Cosmetics",
-      "Diapers",
-      "Others"
-   ];
-
-   const filteredData = Object.entries(data).flatMap(([category, items]) => {
-      if (selectedCategory === "All" || category.toLowerCase() === selectedCategory.toLowerCase()) {
-         return items.filter(item =>
-            item.name.toLowerCase().includes(searchQuery.toLowerCase())
-         );
+   const fetchProducts = async () => {
+      try {
+         const response = await axios.get(`${API_URL}/getAll`);
+         const data = response.data;
+         setProducts({ ...data, syrup: [...(data.syrup || []), ...(data.syrup2 || [])] });
+      } catch (error) {
+         console.error("Error fetching products:", error);
       }
-      return [];
-   });
+   };
+
+   const startEdit = (product) => setEditProduct({ ...product, originalName: product.name });
+
+   const saveEdit = async () => {
+      try {
+         await axios.put(`${API_URL}/updateProduct`, {
+            category: editProduct.category,
+            currentName: editProduct.originalName,
+            newName: editProduct.name,
+            price: editProduct.price,
+            quantity: editProduct.quantity
+         });
+         setEditProduct(null);
+         fetchProducts();
+      } catch (error) {
+         console.error("Error updating product:", error);
+      }
+   };
+
+   const addProduct = async () => {
+      try {
+         await axios.post(`${API_URL}/addProduct`, newProduct);
+         setNewProduct({ name: "", price: "", quantity: "", category: "" });
+         setShowAddForm(false);
+         fetchProducts();
+      } catch (error) {
+         console.error("Error adding product:", error);
+      }
+   };
+
+   const filteredProducts = Object.entries(products).flatMap(([cat, items]) =>
+      (category === "All" || cat.toLowerCase() === category.toLowerCase())
+         ? items.filter(item => item.name.toLowerCase().includes(search.toLowerCase()))
+         : []
+   );
+
+   const InputField = ({ value, onChange, type = "text" }) => (
+      <input type={type} value={value} onChange={(e) => onChange(e.target.value)} className="w-full p-1 border rounded" />
+   );
+
+   const TableCell = ({ isEditing, editValue, itemValue, onChange, type = "text", field }) => (
+      isEditing ? <InputField value={editValue} onChange={onChange} type={type} /> :
+         (type === "number" && field === "price" ? `P${itemValue}` : itemValue)
+   );
 
    return (
       <div>
@@ -56,61 +79,98 @@ const Inventory = () => {
                <IoSearchOutline className="absolute left-3 text-gray-500" />
                <input
                   type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
                   className="outline-none pr-3 pl-10 py-2 text-sm border border-gray-300 rounded-md w-full"
                   placeholder="Search products..."
                />
                <div className="relative inline-block text-left ml-2">
-                  <button
-                     onClick={() => setIsOpen(!isOpen)}
-                     className="inline-flex justify-between w-full rounded-md border border-gray-300 px-3 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none"
-                  >
-                     {selectedCategory}
+                  <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="inline-flex justify-between w-full rounded-md border border-gray-300 px-3 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none">
+                     {category}
                      <span className="ml-2">&#x25BC;</span>
                   </button>
-                  {isOpen && (
+                  {isDropdownOpen && (
                      <div className="absolute py-1 right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
-                        {categories.map((category, index) => (
-                           <a
-                              key={index}
-                              href="#"
-                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                              onClick={() => {
-                                 setSelectedCategory(category);
-                                 setIsOpen(false);
-                              }}
-                           >
-                              {category}
-                           </a>
+                        {CATEGORIES.map((cat) => (
+                           <a key={cat} href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={() => { setCategory(cat); setIsDropdownOpen(false); }}>{cat}</a>
                         ))}
                      </div>
                   )}
                </div>
             </div>
             <div className="flex space-x-2">
-               <button className="bg-gray-600 shadow-md text-white text-sm px-3 py-2 rounded-md font-medium">Add Product</button>
+               <button onClick={() => setShowAddForm(!showAddForm)} className="bg-gray-600 shadow-md text-white text-sm px-3 py-2 rounded-md font-medium">Add Product</button>
                <button className="bg-gray-600 shadow-md text-white text-sm px-3 py-2 rounded-md font-medium">Generate Report</button>
             </div>
          </div>
+
+         {showAddForm && (
+            <div className="mt-4 p-6 bg-gray-100 rounded-md shadow-md">
+               <h3 className="text-lg font-semibold mb-4">Add New Product</h3>
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {["name", "price", "quantity"].map(field => (
+                     <div key={field}>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">{field.charAt(0).toUpperCase() + field.slice(1)}</label>
+                        <InputField
+                           value={newProduct[field]}
+                           onChange={(value) => setNewProduct({ ...newProduct, [field]: value })}
+                           type={field !== "name" ? "number" : "text"}
+                        />
+                     </div>
+                  ))}
+                  <div>
+                     <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                     <select
+                        value={newProduct.category}
+                        onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
+                        className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                     >
+                        <option value="">Select Category</option>
+                        {CATEGORIES.filter(cat => cat !== "All").map(cat => (
+                           <option key={cat} value={cat.toLowerCase()}>{cat}</option>
+                        ))}
+                     </select>
+                  </div>
+               </div>
+               <div className="mt-4 flex justify-end">
+                  <button onClick={addProduct} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition duration-300 ease-in-out">Add Product</button>
+               </div>
+            </div>
+         )}
+
          <div className="mt-6 overflow-y-auto h-[calc(100vh-220px)] rounded-l-md">
             <table className="w-full rounded-md overflow-hidden shadow-md">
                <thead className="bg-gray-100">
                   <tr>
-                     <th className="border border-gray-200 py-4 font-medium">Name</th>
-                     <th className="border border-gray-200 py-4 font-medium">Price</th>
-                     <th className="border border-gray-200 py-4 font-medium">Quantity</th>
-                     <th className="border border-gray-200 py-4 font-medium">Action</th>
+                     {["Name", "Price", "Quantity", "Action"].map(header => (
+                        <th key={header} className="border border-gray-200 py-4 font-medium">{header}</th>
+                     ))}
                   </tr>
                </thead>
                <tbody className="bg-gray-50">
-                  {filteredData.map((item, index) => (
+                  {filteredProducts.map((product, index) => (
                      <tr className="text-center" key={index}>
-                        <td className="border border-gray-200 py-4 break-words px-4 max-w-[100px] text-sm">{item.name}</td>
-                        <td className="border border-gray-200 py-4">P{item.price}</td>
-                        <td className="border border-gray-200 py-4">{item.quantity}</td>
+                        {["name", "price", "quantity"].map(field => (
+                           <td key={field} className="border border-gray-200 py-4 break-words px-4 max-w-[100px] text-sm">
+                              <TableCell
+                                 isEditing={editProduct?._id === product._id}
+                                 editValue={editProduct?.[field]}
+                                 itemValue={product[field]}
+                                 onChange={(value) => setEditProduct({ ...editProduct, [field]: value })}
+                                 type={field !== "name" ? "number" : "text"}
+                                 field={field}
+                              />
+                           </td>
+                        ))}
                         <td className="border border-gray-200 py-4">
-                           <button className="bg-blue-500 text-white px-3 py-1 rounded-md text-sm">Edit</button>
+                           {editProduct && editProduct._id === product._id ? (
+                              <>
+                                 <button onClick={saveEdit} className="bg-green-500 text-white px-3 py-1 rounded-md text-sm mr-2">Save</button>
+                                 <button onClick={() => setEditProduct(null)} className="bg-red-500 text-white px-3 py-1 rounded-md text-sm">Cancel</button>
+                              </>
+                           ) : (
+                              <button onClick={() => startEdit(product)} className="bg-blue-500 text-white px-3 py-1 rounded-md text-sm">Edit</button>
+                           )}
                         </td>
                      </tr>
                   ))}
