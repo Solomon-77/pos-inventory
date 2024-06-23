@@ -1,0 +1,177 @@
+[
+   {
+      "id": 1,
+      "name": "Amoxicillin 250mg/5ml AXMEL",
+      "quantity": 60,
+      "price": 56.00,
+      "category": "antibiotics"
+   },
+   {
+      "id": 2,
+      "name": "Amoxicillin 250mg/5ml MOXYLOR",
+      "quantity": 60,
+      "price": 56.00,
+      "category": "antibiotics"
+   },
+   {
+      "id": 3,
+      "name": "Amoxicillin 125mg/5ml MOXYLOR",
+      "quantity": 60,
+      "price": 45.00,
+      "category": "antibiotics"
+   },
+   {
+      "id": 4,
+      "name": "Azithromycin Dihydrate 200mg/5ml ROZITAN",
+      "quantity": 15,
+      "price": 220.00,
+      "category": "antibiotics"
+   },
+   {
+      "id": 5,
+      "name": "Cefaclor 125mg/5ml CEFLOR",
+      "quantity": 60,
+      "price": 190.00,
+      "category": "antibiotics"
+   },
+   {
+      "id": 6,
+      "name": "Cefaclor 50mg/ml CEFLOR Oral Drops",
+      "quantity": 20,
+      "price": 150.00,
+      "category": "antibiotics"
+   },
+   {
+      "id": 7,
+      "name": "Cefaclor Monohydrate 250mg/5ml CLORMED",
+      "quantity": 60,
+      "price": 200.00,
+      "category": "antibiotics"
+   },
+   {
+      "id": 8,
+      "name": "Cefalexin 125mg/5ml DIACEF",
+      "quantity": 60,
+      "price": 45.00,
+      "category": "antibiotics"
+   },
+   {
+      "id": 9,
+      "name": "Cefixime 20mg/ml CEFIM Oral Drops",
+      "quantity": 15,
+      "price": 175.00,
+      "category": "antibiotics"
+   },
+   {
+      "id": 10,
+      "name": "Cefixime 100mg/5ml EMACIF",
+      "quantity": 60,
+      "price": 200.00,
+      "category": "antibiotics"
+   },
+   {
+      "id": 11,
+      "name": "Cefuroxime 125mg/5ml PHILCEF-DS 125",
+      "quantity": 60,
+      "price": 175.00,
+      "category": "antibiotics"
+   },
+   {
+      "id": 12,
+      "name": "Cefuroxime 125mg/5ml CEFUROX 125",
+      "quantity": 60,
+      "price": 175.00,
+      "category": "antibiotics"
+   },
+   {
+      "id": 13,
+      "name": "Cefuroxime Axetil 250mg/5ml SQCEF",
+      "quantity": 50,
+      "price": 210.00,
+      "category": "antibiotics"
+   },
+   {
+      "id": 14,
+      "name": "Cefuroxime 250mg/5ml CEFUROX",
+      "quantity": 50,
+      "price": 210.00,
+      "category": "antibiotics"
+   },
+   {
+      "id": 15,
+      "name": "Cefuroxime  250mg/5ml CEFUSAPH-250",
+      "quantity": 60,
+      "price": 210.00,
+      "category": "antibiotics"
+   },
+   {
+      "id": 16,
+      "name": "Clarithromycin 125mg/5ml CLARIMAC",
+      "quantity": 60,
+      "price": 120.00,
+      "category": "antibiotics"
+   },
+   {
+      "id": 17,
+      "name": "Clarithromycin 250mg/5ml CLARIMAC DS",
+      "quantity": 60,
+      "price": 180.00,
+      "category": "antibiotics"
+   },
+   {
+      "id": 18,
+      "name": "Co-Amoxiclav 156.25mg/5ml COMXICLA",
+      "quantity": 60,
+      "price": 170.00,
+      "category": "antibiotics"
+   },
+   {
+      "id": 19,
+      "name": "Co-Amoxiclav 312.5mg/5ml MEOXICLAV-DS 312.5",
+      "quantity": 60,
+      "price": 190.00,
+      "category": "antibiotics"
+   },
+   {
+      "id": 20,
+      "name": "Co-Amoxiclav 312.5mg/5ml COMIXCLA",
+      "quantity": 60,
+      "price": 195.00,
+      "category": "antibiotics"
+   },
+   {
+      "id": 21,
+      "name": "Co-Amoxiclav 457mg/5ml MEOXICLAV-DS",
+      "quantity": 70,
+      "price": 270.00,
+      "category": "antibiotics"
+   },
+   {
+      "id": 22,
+      "name": "Cotrimoxazole 200mg/40mg /5ml BACTREX",
+      "quantity": 60,
+      "price": 85.00,
+      "category": "antibiotics"
+   },
+   {
+      "id": 23,
+      "name": "Cotrimoxazole 400mg/80mg/5ml DIAZOLE",
+      "quantity": 60,
+      "price": 120.00,
+      "category": "antibiotics"
+   },
+   {
+      "id": 24,
+      "name": "Erythromycin 200mg/5ml MONPHEVIN",
+      "quantity": 60,
+      "price": 110.00,
+      "category": "antibiotics"
+   },
+   {
+      "id": 25,
+      "name": "Nystatin Drops Z-NYST",
+      "quantity": 30,
+      "price": 100.00,
+      "category": "antibiotics"
+   }
+]

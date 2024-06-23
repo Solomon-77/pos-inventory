@@ -1,0 +1,72 @@
+[
+    {
+        "id": 1,
+        "name": "Happy Baby Pants EXTRA LARGE 4s",
+        "quantity": 100,
+        "price": 39.50,
+        "category": "diapers"
+    },
+    {
+        "id": 2,
+        "name": "Happy Baby Pants LARGE 4s",
+        "quantity": 100,
+        "price": 36.00,
+        "category": "diapers"
+    },
+    {
+        "id": 3,
+        "name": "Happy Disposable Diapers LARGE  (30+4 pads)",
+        "quantity": 100,
+        "price": 8.50,
+        "category": "diapers"
+    },
+    {
+        "id": 4,
+        "name": "Happy Disposable Diapers MEDIUM  (30+4 pads)",
+        "quantity": 100,
+        "price": 7.50,
+        "category": "diapers"
+    },
+    {
+        "id": 5,
+        "name": "Happy Disposable Diapers MEDIUM 4s",
+        "quantity": 100,
+        "price": 33.00,
+        "category": "diapers"
+    },
+    {
+        "id": 6,
+        "name": "Happy Disposable Diapers SMALL  (30+4 pads)",
+        "quantity": 100,
+        "price": 6.50,
+        "category": "diapers"
+    },
+    {
+        "id": 7,
+        "name": "Lampein Baby Comfort MEDIUM (60+6)",
+        "quantity": 100,
+        "price": 7.50,
+        "category": "diapers"
+    },
+    {
+        "id": 8,
+        "name": "Lampein Baby Comfort NEWBORN-SMALL (15+1)",
+        "quantity": 100,
+        "price": 7.00,
+        "category": "diapers"
+    },
+    {
+        "id": 9,
+        "name": "Pampers easy palit pants EXTRA LARGE 12s",
+        "quantity": 100,
+        "price": 100,
+        "category": "diapers"
+    },
+    {
+        "id": 10,
+        "name": "Smile Small Diapers",
+        "quantity": 100,
+        "price": 7.00,
+        "category": "diapers"
+    }
+]

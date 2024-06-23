@@ -1,0 +1,562 @@
+[
+   {
+      "id": 1,
+      "name": "Acetylcysteine Granules FLUIMUCIL 100mg",
+      "quantity": 30,
+      "price": 13.00,
+      "category": "branded"
+   },
+   {
+      "id": 2,
+      "name": "Acetylcysteine Granules FLUIMUCIL 200mg",
+      "quantity": 30,
+      "price": 17.00,
+      "category": "branded"
+   },
+   {
+      "id": 3,
+      "name": "AL HOxMG HO Simeticone 178mg/223mg/30mg Tablet KREMIL-S",
+      "quantity": 100,
+      "price": 9.00,
+      "category": "branded"
+   },
+   {
+      "id": 4,
+      "name": "BRAVO",
+      "quantity": 100,
+      "price": 304.00,
+      "category": "branded"
+   },
+   {
+      "id": 5,
+      "name": "Butamirate Citrate SINECOD FORTE",
+      "quantity": 100,
+      "price": 25.00,
+      "category": "branded"
+   },
+   {
+      "id": 6,
+      "name": "Calcium Carbonate+Vit. D3 1500mg/200 IU Tablet CALCIDAY",
+      "quantity": 100,
+      "price": 7.75,
+      "category": "branded"
+   },
+   {
+      "id": 7,
+      "name": "Carbocisteine 500mg Capsule SOLMUX",
+      "quantity": 100,
+      "price": 12.00,
+      "category": "branded"
+   },
+   {
+      "id": 8,
+      "name": "Carbocisteine+Zinc 500mg/5mg Tablet SOLMUX ADVANCE",
+      "quantity": 100,
+      "price": 15.00,
+      "category": "branded"
+   },
+   {
+      "id": 9,
+      "name": "Ceelin Plus Chewables",
+      "quantity": 100,
+      "price": 7.00,
+      "category": "branded"
+   },
+   {
+      "id": 10,
+      "name": "Cholecalciferol+Mineral CALTRATE ADVANCE",
+      "quantity": 100,
+      "price": 10.00,
+      "category": "branded"
+   },
+   {
+      "id": 11,
+      "name": "Colecalciferol (Vit. D3) 800IU FORTI-D",
+      "quantity": 100,
+      "price": 10.00,
+      "category": "branded"
+   },
+   {
+      "id": 12,
+      "name": "Cyproterone Acetate Ethinylestradiol ALTHEA",
+      "quantity": 100,
+      "price": 475.00,
+      "category": "branded"
+   },
+   {
+      "id": 13,
+      "name": "Cyproterone Acetate Ethinylestradiol DIANE 35",
+      "quantity": 100,
+      "price": 744.00,
+      "category": "branded"
+   },
+   {
+      "id": 14,
+      "name": "d-Alpha Tocopherol (Vit. E) 400IU MYRA e",
+      "quantity": 100,
+      "price": 13.75,
+      "category": "branded"
+   },
+   {
+      "id": 15,
+      "name": "Desogestrel Ethinylestradiol MARVELON",
+      "quantity": 28,
+      "price": 154.00,
+      "category": "branded"
+   },
+   {
+      "id": 16,
+      "name": "Dexamethasone 4mg Decilone Forte",
+      "quantity": 100,
+      "price": 31.00,
+      "category": "branded"
+   },
+   {
+      "id": 17,
+      "name": "Diphenhydramine HCI 25mg Capsule BENADRYL AH",
+      "quantity": 100,
+      "price": 23.00,
+      "category": "branded"
+   },
+   {
+      "id": 18,
+      "name": "Ebastine+Betamethasone 10mg/500mcg CO-ALEVA",
+      "quantity": 100,
+      "price": 37.00,
+      "category": "branded"
+   },
+   {
+      "id": 19,
+      "name": "Etoricoxib 120mg Tab ARCOXIA Ac",
+      "quantity": 100,
+      "price": 92.50,
+      "category": "branded"
+   },
+   {
+      "id": 20,
+      "name": "Ethinyl Estradiol Levonorgestrel LADY PILL",
+      "quantity": 100,
+      "price": 47.00,
+      "category": "branded"
+   },
+   {
+      "id": 21,
+      "name": "Ethinylestradiol Levonorgestrel+Ferrous Fumarate TRUST PILL",
+      "quantity": 100,
+      "price": 54.00,
+      "category": "branded"
+   },
+   {
+      "id": 22,
+      "name": "Gaviscon",
+      "quantity": 100,
+      "price": 36.00,
+      "category": "branded"
+   },
+   {
+      "id": 23,
+      "name": "Gaviscon Tab",
+      "quantity": 100,
+      "price": 26.50,
+      "category": "branded"
+   },
+   {
+      "id": 24,
+      "name": "Hyoscine N-butylbromine+Para 10mg/500mg Tablet BUSCOPAN",
+      "quantity": 100,
+      "price": 31.75,
+      "category": "branded"
+   },
+   {
+      "id": 25,
+      "name": "Hyoscine N-butylbromine+Para 10mg/500mg Tablet BUSCOPAN PLUS",
+      "quantity": 100,
+      "price": 39.25,
+      "category": "branded"
+   },
+   {
+      "id": 26,
+      "name": "Hyoscine N-butylbromine+Para 10mg/500mg Tablet BUSCOPAN VENUS",
+      "quantity": 100,
+      "price": 39.25,
+      "category": "branded"
+   },
+   {
+      "id": 27,
+      "name": "Ibuprofen 200mg Softgel Capsule ADVIL",
+      "quantity": 100,
+      "price": 9.50,
+      "category": "branded"
+   },
+   {
+      "id": 28,
+      "name": "Ibuprofen 200mg Softgel Capsule MEDICOL ADVANCE",
+      "quantity": 100,
+      "price": 8.00,
+      "category": "branded"
+   },
+   {
+      "id": 29,
+      "name": "Ibuprofen 400mg Softgel Capsule MEDICOL ADVANCE 400",
+      "quantity": 100,
+      "price": 12.00,
+      "category": "branded"
+   },
+   {
+      "id": 30,
+      "name": "Ibuprofen 200mg Tablet MIDOL",
+      "quantity": 100,
+      "price": 10.50,
+      "category": "branded"
+   },
+   {
+      "id": 31,
+      "name": "Ibuprofen Paracetamol 200mg/325mg Capsule ALAXAN FR",
+      "quantity": 100,
+      "price": 8.75,
+      "category": "branded"
+   },
+   {
+      "id": 32,
+      "name": "Loperamide 2mg Capsule DIATABS",
+      "quantity": 100,
+      "price": 9.00,
+      "category": "branded"
+   },
+   {
+      "id": 33,
+      "name": "Loperamide 2mg Capsule IMODIUM",
+      "quantity": 100,
+      "price": 18.00,
+      "category": "branded"
+   },
+   {
+      "id": 34,
+      "name": "Loperamide HCI 2mg Tablet LOMOTIL",
+      "quantity": 100,
+      "price": 12.00,
+      "category": "branded"
+   },
+   {
+      "id": 35,
+      "name": "Loratadine 10mg Tablet CLARITIN",
+      "quantity": 100,
+      "price": 36.75,
+      "category": "branded"
+   },
+   {
+      "id": 36,
+      "name": "Meclizine HCI 12.5mg Tablet BONAMINE for Kids",
+      "quantity": 100,
+      "price": 11.00,
+      "category": "branded"
+   },
+   {
+      "id": 37,
+      "name": "Meclizine HCI 25mgTablet BONAMINE",
+      "quantity": 100,
+      "price": 14.25,
+      "category": "branded"
+   },
+   {
+      "id": 38,
+      "name": "Mefenamic Acid 500mg DOLFENAL",
+      "quantity": 100,
+      "price": 33.50,
+      "category": "branded"
+   },
+   {
+      "id": 39,
+      "name": "Mefenamic Acid 500mg PONSTAN SF",
+      "quantity": 100,
+      "price": 44.75,
+      "category": "branded"
+   },
+   {
+      "id": 40,
+      "name": "Mefenamic Ritemed",
+      "quantity": 100,
+      "price": 4.50,
+      "category": "branded"
+   },
+   {
+      "id": 41,
+      "name": "Multivitamins ENERVON",
+      "quantity": 100,
+      "price": 7.75,
+      "category": "branded"
+   },
+   {
+      "id": 42,
+      "name": "Multivitamins Minerals+Amino Acids REVICON FORTE",
+      "quantity": 100,
+      "price": 6.00,
+      "category": "branded"
+   },
+   {
+      "id": 43,
+      "name": "Multivitamins NEUROGEN-E",
+      "quantity": 100,
+      "price": 21.50,
+      "category": "branded"
+   },
+   {
+      "id": 44,
+      "name": "Multivitamins+Iron STRESSTABS",
+      "quantity": 100,
+      "price": 12.00,
+      "category": "branded"
+   },
+   {
+      "id": 45,
+      "name": "Multivitamins+Minerals CENTRUM ADVANCE",
+      "quantity": 100,
+      "price": 12.00,
+      "category": "branded"
+   },
+   {
+      "id": 46,
+      "name": "Multivitamins+Minerals CENTRUM SILVER ADVANCE",
+      "quantity": 100,
+      "price": 14.00,
+      "category": "branded"
+   },
+   {
+      "id": 47,
+      "name": "Multivitamins+Minerals Softgel Capsule CONZACE",
+      "quantity": 100,
+      "price": 13.50,
+      "category": "branded"
+   },
+   {
+      "id": 48,
+      "name": "Myra E ULTIMATE",
+      "quantity": 100,
+      "price": 21.00,
+      "category": "branded"
+   },
+   {
+      "id": 49,
+      "name": "Naproxen 275mg Tablet FLANAX",
+      "quantity": 100,
+      "price": 12.00,
+      "category": "branded"
+   },
+   {
+      "id": 50,
+      "name": "Naproxen Sodium 550mg Tablet FLANAX FORTE",
+      "quantity": 100,
+      "price": 25.00,
+      "category": "branded"
+   },
+   {
+      "id": 51,
+      "name": "Norethisterone Ethinyl Estradiol 400mcg/35mcg Tab MICROPIL",
+      "quantity": 100,
+      "price": 77.00,
+      "category": "branded"
+   },
+   {
+      "id": 52,
+      "name": "Paracetamol 500mg Tablet BIOGESIC",
+      "quantity": 100,
+      "price": 5.00,
+      "category": "branded"
+   },
+   {
+      "id": 53,
+      "name": "Paracetamol Caffeine  500mg/65mg Tablet REXIDOL FORTE",
+      "quantity": 100,
+      "price": 6.00,
+      "category": "branded"
+   },
+   {
+      "id": 54,
+      "name": "Paracetamol Phenylpropanolamine Chlorphenamine NAFARIN-A",
+      "quantity": 100,
+      "price": 9.25,
+      "category": "branded"
+   },
+   {
+      "id": 55,
+      "name": "Paracetamol Propyphenazone Caffeine 250mg/150mg/50mg SARIDON",
+      "quantity": 100,
+      "price": 7.00,
+      "category": "branded"
+   },
+   {
+      "id": 56,
+      "name": "Phenylephrine HCI Chlorphenamine Para 10mg/2mg/500mg BIOFLU",
+      "quantity": 100,
+      "price": 8.00,
+      "category": "branded"
+   },
+   {
+      "id": 57,
+      "name": "Phenylephrine HCI Chlorphenamine Para 10mg/2mg/500mg NEOZEP",
+      "quantity": 100,
+      "price": 6.50,
+      "category": "branded"
+   },
+   {
+      "id": 58,
+      "name": "Phenylephrine HCI Para 10mg/500mg NEOZEP Non-Drowsy",
+      "quantity": 100,
+      "price": 7.50,
+      "category": "branded"
+   },
+   {
+      "id": 59,
+      "name": "Phenylpropanolamine HCI Paracetamol 25mg/500mg DECOLGEN",
+      "quantity": 100,
+      "price": 8.00,
+      "category": "branded"
+   },
+   {
+      "id": 60,
+      "name": "Pregnancy Test PARTNERS",
+      "quantity": 100,
+      "price": 50.00,
+      "category": "branded"
+   },
+   {
+      "id": 61,
+      "name": "Pregnancy Test Accufast HCG  (STRIP)",
+      "quantity": 100,
+      "price": 25.00,
+      "category": "branded"
+   },
+   {
+      "id": 62,
+      "name": "Pregnancy Test Accufast HCG",
+      "quantity": 100,
+      "price": 50.00,
+      "category": "branded"
+   },
+   {
+      "id": 63,
+      "name": "Poten-cee N.A.",
+      "quantity": 100,
+      "price": 7.50,
+      "category": "branded"
+   },
+   {
+      "id": 64,
+      "name": "Poten-cee+Vit. C+Collagen",
+      "quantity": 100,
+      "price": 21.00,
+      "category": "branded"
+   },
+   {
+      "id": 65,
+      "name": "Robitusin",
+      "quantity": 100,
+      "price": 13.50,
+      "category": "branded"
+   },
+   {
+      "id": 66,
+      "name": "Robust 550mg",
+      "quantity": 100,
+      "price": 70.00,
+      "category": "branded"
+   },
+   {
+      "id": 67,
+      "name": "Robust Extreme",
+      "quantity": 100,
+      "price": 145.00,
+      "category": "branded"
+   },
+   {
+      "id": 68,
+      "name": "Sleepwell Melatonin 3mg",
+      "quantity": 100,
+      "price": 18.00,
+      "category": "branded"
+   },
+   {
+      "id": 69,
+      "name": "SINUPRET FORTE",
+      "quantity": 100,
+      "price": 20.50,
+      "category": "branded"
+   },
+   {
+      "id": 70,
+      "name": "Tempra Forte",
+      "quantity": 100,
+      "price": 5.00,
+      "category": "branded"
+   },
+   {
+      "id": 71,
+      "name": "Trust Condom Classic",
+      "quantity": 100,
+      "price": 25.00,
+      "category": "branded"
+   },
+   {
+      "id": 72,
+      "name": "Trust Condom Strawberry",
+      "quantity": 100,
+      "price": 30.00,
+      "category": "branded"
+   },
+   {
+      "id": 73,
+      "name": "Tuseran Forte",
+      "quantity": 100,
+      "price": 11.50,
+      "category": "branded"
+   },
+   {
+      "id": 74,
+      "name": "Vit. B1+B6+B12  100mg/5mg/50mcg Tablet PHAREX",
+      "quantity": 100,
+      "price": 6.00,
+      "category": "branded"
+   },
+   {
+      "id": 75,
+      "name": "Vit. B1+B6+B12  100mg/5mg/50mcg Tablet NEUROBION",
+      "quantity": 100,
+      "price": 26.50,
+      "category": "branded"
+   },
+   {
+      "id": 76,
+      "name": "Vit. B1+B6+B12  100mg/5mg/50mcg Tablet NEUROBION FORTE",
+      "quantity": 100,
+      "price": 61.50,
+      "category": "branded"
+   },
+   {
+      "id": 77,
+      "name": "Vitex negundo L. Lagundi Leaf 600mg Capsule ASCOF FORTE",
+      "quantity": 100,
+      "price": 8.50,
+      "category": "branded"
+   },
+   {
+      "id": 78,
+      "name": "Vitex negundo L. Lagundi Leaf 600mg Capsule PLEMEX FORTE",
+      "quantity": 100,
+      "price": 7.00,
+      "category": "branded"
+   },
+   {
+      "id": 79,
+      "name": "Xanthone Gold",
+      "quantity": 100,
+      "price": 15.25,
+      "category": "branded"
+   },
+   {
+      "id": 80,
+      "name": "Xanthone Plus",
+      "quantity": 100,
+      "price": 13.25,
+      "category": "branded"
+   }
+]

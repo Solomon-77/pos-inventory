@@ -31,8 +31,10 @@ const connectWithRetry = () => {
 
 connectWithRetry();
 
+const dataRoute = require("./routes/dataRoute");
 const route = require("./routes/authRoute");
 app.use(route);
+app.use(dataRoute);
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
