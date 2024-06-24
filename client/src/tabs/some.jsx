@@ -61,29 +61,31 @@ const Sales = () => {
          total: sale.total,
          discountType: sale.discountType,
          date: new Date(sale.date),
-         saleId: sale._id
+         receiptNumber: sale.receiptNumber
       });
    };
 
    return (
       <div>
-         <h1 className="text-lg font-semibold mb-3">Transaction History</h1>
-         <div className="overflow-auto rounded-lg shadow-md h-[calc(100vh-300px)]">
+         <h1 className="text-lg font-semibold mb-4">Transaction History</h1>
+         <div className="overflow-x-auto rounded-lg shadow-md">
             <table className="min-w-full bg-white">
                <thead className="bg-gray-100">
                   <tr>
-                     <th className="py-2 px-4 border font-medium">Date</th>
-                     <th className="py-2 px-4 border font-medium">Total</th>
-                     <th className="py-2 px-4 border font-medium">Discount Type</th>
-                     <th className="py-2 px-4 border font-medium">Items</th>
-                     <th className="py-2 px-4 border font-medium">Order Status</th>
-                     <th className="py-2 px-4 border font-medium">Actions</th>
+                     <th className="py-2 px-4 border">Date</th>
+                     <th className="py-2 px-4 border">Receipt Number</th>
+                     <th className="py-2 px-4 border">Total</th>
+                     <th className="py-2 px-4 border">Discount Type</th>
+                     <th className="py-2 px-4 border">Items</th>
+                     <th className="py-2 px-4 border">Order Status</th>
+                     <th className="py-2 px-4 border">Actions</th>
                   </tr>
                </thead>
                <tbody>
                   {sales.map((sale) => (
                      <tr className='text-sm text-center' key={sale._id}>
                         <td className="py-2 px-4 border">{new Date(sale.date).toLocaleString()}</td>
+                        <td className="py-2 px-4 border">{sale.receiptNumber}</td>
                         <td className="py-2 px-4 border">P{sale.total.toFixed(2)}</td>
                         <td className="py-2 px-4 border">{sale.discountType || 'None'}</td>
                         <td className="py-2 px-4 border">
@@ -105,7 +107,7 @@ const Sales = () => {
                         <td className="py-2 px-4 border">
                            <button
                               onClick={() => handleViewReceipt(sale)}
-                              className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-[5px] rounded-md text-xs"
+                              className="bg-blue-500 text-white px-2 py-1 rounded"
                            >
                               View Receipt
                            </button>
@@ -115,14 +117,13 @@ const Sales = () => {
                </tbody>
             </table>
          </div>
-
          {selectedReceipt && (
-            <div className="fixed z-20 inset-0 p-4 bg-gray-600 bg-opacity-50 flex items-center justify-center">
-               <div className="bg-white p-6 rounded-lg max-w-md w-full">
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+               <div className="bg-white p-6 rounded-lg">
                   <Receipt data={selectedReceipt} />
                   <button
                      onClick={() => setSelectedReceipt(null)}
-                     className="mt-4 bg-gray-600 hover:bg-gray-700 text-white text-sm py-[5px] px-4 rounded-md"
+                     className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
                   >
                      Close
                   </button>

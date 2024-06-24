@@ -110,7 +110,7 @@ const Inventory = () => {
          case "low":
             title = "Low Stock Alert";
             reportData = Object.values(products).flat()
-               .filter(p => p.quantity <= 5)
+               .filter(p => p.quantity < 6)  // Changed condition here
                .sort((a, b) => a.quantity - b.quantity)
                .map(p => ({
                   name: p.name,
@@ -205,7 +205,7 @@ const Inventory = () => {
             </div>
          )}
 
-         <div className="mt-6 overflow-y-auto h-[calc(100vh-220px)] rounded-l-md">
+         <div className="mt-4 overflow-y-auto h-[calc(100vh-215px)] rounded-l-lg">
             <table className="w-full rounded-md overflow-hidden shadow-md">
                <thead className="bg-gray-100">
                   <tr>
