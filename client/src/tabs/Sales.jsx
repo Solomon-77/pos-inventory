@@ -35,9 +35,15 @@ const OrderStatusSelect = ({ status, saleId, onStatusChange }) => {
 const Sales = () => {
    const [sales, setSales] = useState([]);
    const [selectedReceipt, setSelectedReceipt] = useState(null);
+   const [revenueStats, setRevenueStats] = useState({
+      dailyRevenue: 0,
+      weeklyRevenue: 0,
+      monthlyRevenue: 0
+   });
 
    useEffect(() => {
       fetchSales();
+      fetchRevenueStatistics();
    }, []);
 
    const fetchSales = async () => {
@@ -46,6 +52,15 @@ const Sales = () => {
          setSales(response.data);
       } catch (error) {
          console.error("Error fetching sales:", error);
+      }
+   };
+
+   const fetchRevenueStatistics = async () => {
+      try {
+         const response = await axios.get(`${API_URL}/revenueStatistics`);
+         setRevenueStats(response.data);
+      } catch (error) {
+         console.error("Error fetching revenue statistics:", error);
       }
    };
 
@@ -67,9 +82,26 @@ const Sales = () => {
 
    return (
       <div>
-         <h1 className="text-lg font-semibold mb-3">Transaction History</h1>
-         <div className="overflow-auto rounded-lg shadow-md h-[calc(100vh-300px)]">
-            <table className="min-w-full bg-white">
+         <div className="bg-white p-4 rounded-lg shadow-md">
+            <h2 className="font-bold text-lg mb-4">Revenue Overview</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+               <div className="bg-blue-100 p-4 text-center rounded-lg">
+                  <h3 className="text-gray-600 font-medium">Daily Revenue</h3>
+                  <p className="font-bold text-2xl mt-1">P{revenueStats.dailyRevenue.toFixed(2)}</p>
+               </div>
+               <div className="bg-green-100 p-4 text-center rounded-lg">
+                  <h3 className="text-gray-600 font-medium">Weekly Revenue</h3>
+                  <p className="font-bold text-2xl mt-1">P{revenueStats.weeklyRevenue.toFixed(2)}</p>
+               </div>
+               <div className="bg-purple-100 p-4 text-center rounded-lg">
+                  <h3 className="text-gray-600 font-medium">Monthly Revenue</h3>
+                  <p className="font-bold text-2xl mt-1">P{revenueStats.monthlyRevenue.toFixed(2)}</p>
+               </div>
+            </div>
+         </div>
+         <h1 className="text-lg font-semibold mb-3 mt-4">Transaction History</h1>
+         <div className="overflow-auto rounded-lg h-[calc(100vh-330px)]">
+            <table className="min-w-full bg-white shadow-md">
                <thead className="bg-gray-100">
                   <tr>
                      <th className="py-2 px-4 border font-medium">Date</th>
@@ -115,6 +147,7 @@ const Sales = () => {
                </tbody>
             </table>
          </div>
+
 
          {selectedReceipt && (
             <div className="fixed z-20 inset-0 p-4 bg-gray-600 bg-opacity-50 flex items-center justify-center">
