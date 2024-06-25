@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 
+const URL = import.meta.env.VITE_API_URL;
+
 const Settings = () => {
   const [username, setUsername] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
@@ -25,7 +27,7 @@ const Settings = () => {
     }
 
     try {
-      const response = await axios.put('http://localhost:5500/update-username', { username }, {
+      const response = await axios.put(`${URL}/update-username`, { username }, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       setMessage(response.data.message);
@@ -71,7 +73,7 @@ const Settings = () => {
     }
 
     try {
-      const response = await axios.put('http://localhost:5500/change-password', {
+      const response = await axios.put(`${URL}/change-password`, {
         currentPassword,
         newPassword
       }, {
