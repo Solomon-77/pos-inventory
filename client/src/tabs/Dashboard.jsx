@@ -15,7 +15,7 @@ const Dashboard = () => {
       recentOrders: [],
       lowStockItems: [],
       expiredStocks: [],
-      weeklySales: []
+      revenueData: {}
    });
 
    useEffect(() => {
@@ -34,19 +34,16 @@ const Dashboard = () => {
             axios.get(`${API_URL}/revenueStatistics`)
          ]);
 
-         // Assuming the API returns weekly sales data as an array of daily sales
-         const weeklySalesData = revenueResponse.data.weeklySales || [];
-
-         // Transform the data for the chart
-         const weeklySales = weeklySalesData.map((sale, index) => ({
-            day: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][index],
-            sales: sale
-         }));
+         const revenueData = [
+            { name: 'Daily', revenue: revenueResponse.data.dailyRevenue },
+            { name: 'Weekly', revenue: revenueResponse.data.weeklyRevenue },
+            { name: 'Monthly', revenue: revenueResponse.data.monthlyRevenue }
+         ];
 
          setDashboardData({
             ...dashboardResponse.data,
             dailySales: revenueResponse.data.dailyRevenue,
-            weeklySales: weeklySales
+            revenueData: revenueData
          });
       } catch (error) {
          console.error("Error fetching dashboard data:", error);
@@ -81,15 +78,15 @@ const Dashboard = () => {
 
          {userRole !== 'cashier' && (
             <div className="bg-white p-6 rounded-lg shadow-md">
-               <h2 className="font-bold text-xl mb-4">Weekly Sales</h2>
+               <h2 className="font-bold text-xl mb-4">Revenue Statistics</h2>
                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={dashboardData.weeklySales}>
+                  <BarChart data={dashboardData.revenueData}>
                      <CartesianGrid strokeDasharray="3 3" />
-                     <XAxis dataKey="day" />
+                     <XAxis dataKey="name" />
                      <YAxis />
                      <Tooltip />
                      <Legend />
-                     <Bar dataKey="sales" fill="#8884d8" />
+                     <Bar dataKey="revenue" fill="#8884d8" />
                   </BarChart>
                </ResponsiveContainer>
             </div>
