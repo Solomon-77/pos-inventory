@@ -4,6 +4,8 @@ import PropTypes from "prop-types";
 import { useState, useEffect } from "react";
 import axios from 'axios';
 
+const URL = import.meta.env.VITE_API_URL;
+
 const Header = ({ toggle, setToggle }) => {
    const location = useLocation();
    const pathNames = {
@@ -24,7 +26,7 @@ const Header = ({ toggle, setToggle }) => {
    useEffect(() => {
       const fetchUserInfo = async () => {
          try {
-            const response = await axios.get('http://localhost:5500/user-info', {
+            const response = await axios.get(`${URL}/user-info`, {
                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
             setUserInfo(response.data);
