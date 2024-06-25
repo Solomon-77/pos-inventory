@@ -1,27 +1,19 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import Receipt from '../sales/Receipt';
+import { jwtDecode } from "jwt-decode";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 const OrderStatusSelect = ({ status, saleId, onStatusChange }) => {
-   const [currentStatus, setCurrentStatus] = useState(status);
-
    const handleChange = async (e) => {
       const newStatus = e.target.value;
-      setCurrentStatus(newStatus);
-      try {
-         await axios.put(`${API_URL}/updateSaleStatus/${saleId}`, { status: newStatus });
-         onStatusChange(saleId, newStatus);
-      } catch (error) {
-         console.error('Error updating sale status:', error);
-         setCurrentStatus(status); // Revert to original status if update fails
-      }
+      onStatusChange(saleId, newStatus);
    };
 
    return (
       <select
-         value={currentStatus}
+         value={status}
          onChange={handleChange}
          className="p-1 border rounded"
       >
@@ -40,34 +32,50 @@ const Sales = () => {
       weeklyRevenue: 0,
       monthlyRevenue: 0
    });
+   const [userRole, setUserRole] = useState("");
 
-   useEffect(() => {
-      fetchSales();
-      fetchRevenueStatistics();
-   }, []);
-
-   const fetchSales = async () => {
+   const fetchSales = useCallback(async () => {
       try {
          const response = await axios.get(`${API_URL}/getSales`);
          setSales(response.data);
       } catch (error) {
          console.error("Error fetching sales:", error);
       }
-   };
+   }, []);
 
-   const fetchRevenueStatistics = async () => {
+   const fetchRevenueStatistics = useCallback(async () => {
       try {
          const response = await axios.get(`${API_URL}/revenueStatistics`);
          setRevenueStats(response.data);
       } catch (error) {
          console.error("Error fetching revenue statistics:", error);
       }
-   };
+   }, []);
 
-   const handleStatusChange = (saleId, newStatus) => {
-      setSales(sales.map(sale =>
-         sale._id === saleId ? { ...sale, status: newStatus } : sale
-      ));
+   useEffect(() => {
+      const token = localStorage.getItem('token');
+      if (token) {
+         const decodedToken = jwtDecode(token);
+         setUserRole(decodedToken.role);
+      }
+      fetchSales();
+      fetchRevenueStatistics();
+   }, [fetchSales, fetchRevenueStatistics]);
+
+   const handleStatusChange = async (saleId, newStatus) => {
+      try {
+         const response = await axios.put(`${API_URL}/updateSaleStatus/${saleId}`, { status: newStatus });
+         
+         // Update the local state immediately
+         setSales(prevSales => prevSales.map(sale =>
+            sale._id === saleId ? { ...sale, status: newStatus } : sale
+         ));
+         
+         // Update revenue stats
+         setRevenueStats(response.data.revenueStats);
+      } catch (error) {
+         console.error('Error updating sale status:', error);
+      }
    };
 
    const handleViewReceipt = (sale) => {
@@ -82,25 +90,27 @@ const Sales = () => {
 
    return (
       <div>
-         <div className="bg-white p-4 rounded-lg shadow-md">
-            <h2 className="font-bold text-lg mb-4">Revenue Overview</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-               <div className="bg-blue-100 p-4 text-center rounded-lg">
-                  <h3 className="text-gray-600 font-medium">Daily Revenue</h3>
-                  <p className="font-bold text-2xl mt-1">P{revenueStats.dailyRevenue.toFixed(2)}</p>
-               </div>
-               <div className="bg-green-100 p-4 text-center rounded-lg">
-                  <h3 className="text-gray-600 font-medium">Weekly Revenue</h3>
-                  <p className="font-bold text-2xl mt-1">P{revenueStats.weeklyRevenue.toFixed(2)}</p>
-               </div>
-               <div className="bg-purple-100 p-4 text-center rounded-lg">
-                  <h3 className="text-gray-600 font-medium">Monthly Revenue</h3>
-                  <p className="font-bold text-2xl mt-1">P{revenueStats.monthlyRevenue.toFixed(2)}</p>
+         {userRole !== 'cashier' && (
+            <div className="bg-white p-4 rounded-lg shadow-md">
+               <h2 className="font-bold text-lg mb-4">Revenue Overview</h2>
+               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="bg-blue-100 p-4 text-center rounded-lg">
+                     <h3 className="text-gray-600 font-medium">Daily Revenue</h3>
+                     <p className="font-bold text-2xl mt-1">P{revenueStats.dailyRevenue.toFixed(2)}</p>
+                  </div>
+                  <div className="bg-green-100 p-4 text-center rounded-lg">
+                     <h3 className="text-gray-600 font-medium">Weekly Revenue</h3>
+                     <p className="font-bold text-2xl mt-1">P{revenueStats.weeklyRevenue.toFixed(2)}</p>
+                  </div>
+                  <div className="bg-purple-100 p-4 text-center rounded-lg">
+                     <h3 className="text-gray-600 font-medium">Monthly Revenue</h3>
+                     <p className="font-bold text-2xl mt-1">P{revenueStats.monthlyRevenue.toFixed(2)}</p>
+                  </div>
                </div>
             </div>
-         </div>
-         <h1 className="text-lg font-semibold mb-3 mt-4">Transaction History</h1>
-         <div className="overflow-auto rounded-lg h-[calc(100vh-330px)]">
+         )}
+         <h1 className={`text-lg font-semibold mb-3 ${userRole !== 'cashier' ? 'mt-4' : ''}`}>Transaction History</h1>
+         <div className={`overflow-auto rounded-lg ${userRole === 'cashier' ? 'h-[calc(100vh-150px)]' : 'h-[calc(100vh-330px)]'}`}>
             <table className="min-w-full bg-white shadow-md">
                <thead className="bg-gray-100">
                   <tr>
@@ -147,7 +157,6 @@ const Sales = () => {
                </tbody>
             </table>
          </div>
-
 
          {selectedReceipt && (
             <div className="fixed z-20 inset-0 p-4 bg-gray-600 bg-opacity-50 flex items-center justify-center">

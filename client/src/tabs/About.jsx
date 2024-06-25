@@ -4,7 +4,7 @@ const About = () => {
     { name: "Cyrill Eustaquio", role: "Lead Developer / UI/UX Designer", email: "qckreustaquio@tip.edu.ph", image: "https://scontent.xx.fbcdn.net/v/t1.15752-9/333968244_129433816735745_7625756622670927603_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=0024fc&_nc_ohc=LZ2ytuwa60UQ7kNvgEeUyE4&_nc_ad=z-m&_nc_cid=0&_nc_ht=scontent.xx&oh=03_Q7cD1QHM_IMPoR1c9zH4Se2E9sciJFBI6lVTQQcq4u49eKLmCQ&oe=667BAD97" },
     { name: "Francis Mata", role: "UI Designer / Documentation", email: "qfjmmata@tip.edu.ph", image: "https://scontent.fmnl4-7.fna.fbcdn.net/v/t1.15752-9/448763219_1245749233497661_8356426628384819243_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=9f807c&_nc_ohc=CE-qzWZ35wAQ7kNvgEXAPVu&_nc_ht=scontent.fmnl4-7.fna&oh=03_Q7cD1QHCHwqWZHC7UOTIzlF4Fqw4TthdqTR-9MgqPC9XctzAbg&oe=66A21B4C" },
     { name: "Robie Naz", role: "UI Designer / Documentation", email: "qbrbnaz@tip.edu.ph", image: "https://scontent.fmnl4-3.fna.fbcdn.net/v/t1.15752-9/441963866_491117730086949_8950016932612432863_n.jpg?_nc_cat=109&ccb=1-7&_nc_sid=9f807c&_nc_ohc=YZlvXh3Fy4QQ7kNvgEWRiLM&_nc_ht=scontent.fmnl4-3.fna&oh=03_Q7cD1QGB6FLQAVGfVxfqXn12Qiifi71aaZN_2xWnoKkkSBaUgA&oe=66A2068E" },
-    { name: "Gab Gillego", role: "MVP", email: "qgamgillego@tip.edu.ph", image: "https://images.ctfassets.net/ub3bwfd53mwy/5WFv6lEUb1e6kWeP06CLXr/acd328417f24786af98b1750d90813de/4_Image.jpg?w=750" },
+    { name: "Gab Gillego", role: "The Overseer", email: "qgamgillego@tip.edu.ph", image: "https://images.ctfassets.net/ub3bwfd53mwy/5WFv6lEUb1e6kWeP06CLXr/acd328417f24786af98b1750d90813de/4_Image.jpg?w=750" },
   ];
 
   return (

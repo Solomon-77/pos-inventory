@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { jwtDecode } from "jwt-decode";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 const Dashboard = () => {
+   const [userRole, setUserRole] = useState("");
    const [dashboardData, setDashboardData] = useState({
       dailySales: 0,
       inventoryCount: 0,
@@ -17,13 +19,35 @@ const Dashboard = () => {
    });
 
    useEffect(() => {
+      const token = localStorage.getItem('token');
+      if (token) {
+         const decodedToken = jwtDecode(token);
+         setUserRole(decodedToken.role);
+      }
       fetchDashboardData();
    }, []);
 
    const fetchDashboardData = async () => {
       try {
-         const response = await axios.get(`${API_URL}/dashboardData`);
-         setDashboardData(response.data);
+         const [dashboardResponse, revenueResponse] = await Promise.all([
+            axios.get(`${API_URL}/dashboardData`),
+            axios.get(`${API_URL}/revenueStatistics`)
+         ]);
+
+         // Assuming the API returns weekly sales data as an array of daily sales
+         const weeklySalesData = revenueResponse.data.weeklySales || [];
+
+         // Transform the data for the chart
+         const weeklySales = weeklySalesData.map((sale, index) => ({
+            day: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][index],
+            sales: sale
+         }));
+
+         setDashboardData({
+            ...dashboardResponse.data,
+            dailySales: revenueResponse.data.dailyRevenue,
+            weeklySales: weeklySales
+         });
       } catch (error) {
          console.error("Error fetching dashboard data:", error);
       }
@@ -33,39 +57,43 @@ const Dashboard = () => {
       <div className="space-y-6">
          <div className="bg-white p-6 rounded-lg shadow-md">
             <h1 className="font-bold text-xl mb-4">Overview</h1>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-               <div className="bg-blue-100 p-4 text-center rounded-lg">
-                  <h1 className="font-bold text-2xl">P{dashboardData.dailySales.toFixed(2)}</h1>
-                  <h1 className="text-gray-600 font-medium">Daily Sales</h1>
-               </div>
-               <div className="bg-green-100 p-4 text-center rounded-lg">
+            <div className={`grid gap-6 ${userRole === 'cashier' ? 'grid-cols-1 md:grid-cols-3' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4'}`}>
+               {userRole !== 'cashier' && (
+                  <div className="bg-blue-100 p-4 text-center rounded-lg flex flex-col justify-center items-center">
+                     <h1 className="font-bold text-2xl">P{dashboardData.dailySales.toFixed(2)}</h1>
+                     <h1 className="text-gray-600 font-medium">Daily Sales</h1>
+                  </div>
+               )}
+               <div className="bg-green-100 p-4 text-center rounded-lg flex flex-col justify-center items-center">
                   <h1 className="font-bold text-2xl">{dashboardData.inventoryCount}</h1>
                   <h1 className="text-gray-600 font-medium">Inventory Items</h1>
                </div>
-               <div className="bg-yellow-100 p-4 text-center rounded-lg">
+               <div className="bg-yellow-100 p-4 text-center rounded-lg flex flex-col justify-center items-center">
                   <h1 className="font-bold text-2xl">{dashboardData.ordersToday}</h1>
                   <h1 className="text-gray-600 font-medium">Orders Today</h1>
                </div>
-               <div className="bg-purple-100 p-4 text-center rounded-lg">
+               <div className="bg-purple-100 p-4 text-center rounded-lg flex flex-col justify-center items-center">
                   <h1 className="font-bold text-xl">{dashboardData.topSellingItem}</h1>
                   <h1 className="text-gray-600 font-medium">Top Selling Item</h1>
                </div>
             </div>
          </div>
 
-         <div className="bg-white p-6 rounded-lg shadow-md">
-            <h2 className="font-bold text-xl mb-4">Weekly Sales</h2>
-            <ResponsiveContainer width="100%" height={300}>
-               <BarChart data={dashboardData.weeklySales}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="day" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="sales" fill="#8884d8" />
-               </BarChart>
-            </ResponsiveContainer>
-         </div>
+         {userRole !== 'cashier' && (
+            <div className="bg-white p-6 rounded-lg shadow-md">
+               <h2 className="font-bold text-xl mb-4">Weekly Sales</h2>
+               <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={dashboardData.weeklySales}>
+                     <CartesianGrid strokeDasharray="3 3" />
+                     <XAxis dataKey="day" />
+                     <YAxis />
+                     <Tooltip />
+                     <Legend />
+                     <Bar dataKey="sales" fill="#8884d8" />
+                  </BarChart>
+               </ResponsiveContainer>
+            </div>
+         )}
 
          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-white p-6 rounded-lg shadow-md">
