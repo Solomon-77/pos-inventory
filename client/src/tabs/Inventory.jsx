@@ -20,6 +20,7 @@ const Inventory = () => {
    const [showAddForm, setShowAddForm] = useState(false);
    const [report, setReport] = useState(null);
    const [hasSearched, setHasSearched] = useState(false);
+   const [error, setError] = useState("");
 
    useEffect(() => {
       fetchProducts();
@@ -37,7 +38,30 @@ const Inventory = () => {
 
    const startEdit = (product) => setEditProduct({ ...product, originalName: product.name });
 
+   const validateInput = (field, value) => {
+      if (field === "price" || field === "quantity") {
+         const numValue = Number(value);
+         if (numValue < 0) {
+            setError(`${field.charAt(0).toUpperCase() + field.slice(1)} cannot be negative.`);
+            return false;
+         }
+         if (field === "quantity" && numValue > 10000) {
+            setError("Quantity cannot be more than 10,000.");
+            return false;
+         }
+         if (field === "price" && numValue > 1000000) {
+            setError("Price cannot be more than 1,000,000.");
+            return false;
+         }
+      }
+      setError("");
+      return true;
+   };
+
    const saveEdit = async () => {
+      if (!validateInput("price", editProduct.price) || !validateInput("quantity", editProduct.quantity)) {
+         return;
+      }
       try {
          await axios.put(`${API_URL}/updateProduct`, {
             category: editProduct.category,
@@ -54,6 +78,9 @@ const Inventory = () => {
    };
 
    const addProduct = async () => {
+      if (!validateInput("price", newProduct.price) || !validateInput("quantity", newProduct.quantity)) {
+         return;
+      }
       try {
          await axios.post(`${API_URL}/addProduct`, newProduct);
          setNewProduct({ name: "", price: "", quantity: "", category: "" });
@@ -61,6 +88,16 @@ const Inventory = () => {
          fetchProducts();
       } catch (error) {
          console.error("Error adding product:", error);
+      }
+   };
+
+   const handleInputChange = (field, value, isEdit = false) => {
+      if (validateInput(field, value)) {
+         if (isEdit) {
+            setEditProduct({ ...editProduct, [field]: value });
+         } else {
+            setNewProduct({ ...newProduct, [field]: value });
+         }
       }
    };
 
@@ -111,7 +148,7 @@ const Inventory = () => {
          case "low":
             title = "Low Stock Alert";
             reportData = Object.values(products).flat()
-               .filter(p => p.quantity < 6)  // Changed condition here
+               .filter(p => p.quantity < 6)
                .sort((a, b) => a.quantity - b.quantity)
                .map(p => ({
                   name: p.name,
@@ -177,6 +214,7 @@ const Inventory = () => {
          {showAddForm && (
             <div className="mt-4 p-5 bg-gray-100 rounded-md shadow-md">
                <h3 className="text-lg font-semibold mb-2">Add New Product</h3>
+               {error && <p className="text-red-500 mb-2">{error}</p>}
                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {["name", "price", "quantity"].map(field => (
                      <div key={field}>
@@ -184,7 +222,7 @@ const Inventory = () => {
                         <input
                            type={field !== "name" ? "number" : "text"}
                            value={newProduct[field]}
-                           onChange={(e) => setNewProduct({ ...newProduct, [field]: e.target.value })}
+                           onChange={(e) => handleInputChange(field, e.target.value)}
                            className="w-full p-1 border rounded outline-none px-3 text-sm py-2"
                         />
                      </div>
@@ -232,7 +270,7 @@ const Inventory = () => {
                                     <input
                                        type={field !== "name" ? "number" : "text"}
                                        value={editProduct[field]}
-                                       onChange={(e) => setEditProduct({ ...editProduct, [field]: e.target.value })}
+                                       onChange={(e) => handleInputChange(field, e.target.value, true)}
                                        className="w-full p-1 border rounded outline-none px-3 text-sm py-2"
                                     />
                                  ) : (

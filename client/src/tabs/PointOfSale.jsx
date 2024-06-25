@@ -60,9 +60,17 @@ const PointOfSale = () => {
       setFilteredProducts(filtered);
    };
 
-   const addToCart = (product, quantity) => {
+   const addToCart = (product) => {
+      const quantityInput = document.getElementById(`quantity-${product._id}`);
+      const quantity = parseInt(quantityInput.value);
+
+      if (isNaN(quantity) || quantity <= 0) {
+         alert("Please enter a valid quantity greater than 0.");
+         return;
+      }
+
       const existingItem = cart.find(item => item._id === product._id);
-      const availableQuantity = product.quantity - (existingItem ? existingItem.quantity : 0);
+      const availableQuantity = Math.min(product.quantity, 10000) - (existingItem ? existingItem.quantity : 0);
 
       if (quantity > availableQuantity) {
          alert(`Cannot add more than ${availableQuantity} items. Stock limit reached.`);
@@ -76,6 +84,8 @@ const PointOfSale = () => {
       } else {
          setCart([...cart, { ...product, quantity }]);
       }
+
+      quantityInput.value = "1";
    };
 
 
@@ -210,7 +220,7 @@ const PointOfSale = () => {
                                        type="number"
                                        defaultValue="1"
                                        min="1"
-                                       max={product.quantity}
+                                       max={Math.min(product.quantity, 10000)}
                                        className="w-16 p-1 border rounded outline-none px-2 text-sm py-1"
                                        id={`quantity-${product._id}`}
                                     />
