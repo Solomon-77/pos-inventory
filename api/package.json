@@ -11,14 +11,17 @@
   "dependencies": {
     "argon2": "^0.40.3",
     "axios": "^1.7.2",
+    "child_process": "^1.0.2",
     "cors": "^2.8.5",
     "crypto-js": "^4.2.0",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "fs": "^0.0.1-security",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.7.0",
     "mongoose": "^8.4.1",
     "mongoose-ttl": "^0.0.3",
-    "nodemailer": "^6.9.13"
+    "nodemailer": "^6.9.13",
+    "path": "^0.12.7"
   }
 }

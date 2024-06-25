@@ -1,8 +1,8 @@
 import { Outlet, useLocation } from 'react-router-dom';
 import { IoMdMenu } from "react-icons/io";
 import PropTypes from "prop-types";
-import { jwtDecode } from "jwt-decode";
 import { useState, useEffect } from "react";
+import axios from 'axios';
 
 const Header = ({ toggle, setToggle }) => {
    const location = useLocation();
@@ -13,20 +13,27 @@ const Header = ({ toggle, setToggle }) => {
       "/sales": "Sales",
       "/maintenance": "Maintenance",
       "/help": "Help",
-      "/about": "About",
+      "/about": "About Us",
       "/settings": "Settings"
    };
 
    const currentPathName = pathNames[location.pathname];
 
-   const [userInfo, setUserInfo] = useState({ username: '', role: '' });
+   const [userInfo, setUserInfo] = useState({ username: '', email: '', role: '' });
 
    useEffect(() => {
-      const token = localStorage.getItem('token');
-      if (token) {
-         const decodedToken = jwtDecode(token);
-         setUserInfo({ username: decodedToken.username, role: decodedToken.role });
-      }
+      const fetchUserInfo = async () => {
+         try {
+            const response = await axios.get('http://localhost:5500/user-info', {
+               headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+            });
+            setUserInfo(response.data);
+         } catch (error) {
+            console.error('Error fetching user info:', error);
+         }
+      };
+
+      fetchUserInfo();
    }, []);
 
    return (

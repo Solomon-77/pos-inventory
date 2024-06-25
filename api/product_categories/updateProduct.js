@@ -9,6 +9,7 @@ const {
    Diapers,
    Others
 } = require('../category_models/category');
+const UserLog = require('../model/UserLog');
 
 const updateProduct = async (req, res) => {
    try {
@@ -34,11 +35,30 @@ const updateProduct = async (req, res) => {
          return res.status(404).json({ error: 'Product not found' });
       }
 
-      if (newName !== undefined) product.name = newName;
-      if (quantity !== undefined) product.quantity = quantity;
-      if (price !== undefined) product.price = price;
+      let updateDetails = [];
+      if (newName !== undefined && newName !== product.name) {
+         updateDetails.push(`name from ${product.name} to ${newName}`);
+         product.name = newName;
+      }
+      if (quantity !== undefined && quantity !== product.quantity) {
+         updateDetails.push(`quantity from ${product.quantity} to ${quantity}`);
+         product.quantity = quantity;
+      }
+      if (price !== undefined && price !== product.price) {
+         updateDetails.push(`price from ${product.price} to ${price}`);
+         product.price = price;
+      }
 
       await product.save();
+
+      // Log the action
+      if (updateDetails.length > 0) {
+         await UserLog.create({
+            user: req.user ? req.user.username : 'System',
+            action: 'Updated Product',
+            details: `Updated ${currentName} in ${category} category: ${updateDetails.join(', ')}`,
+         });
+      }
 
       res.status(200).json(product);
    } catch (err) {

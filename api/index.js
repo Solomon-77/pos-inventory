@@ -33,8 +33,12 @@ connectWithRetry();
 
 const dataRoute = require("./routes/dataRoute");
 const route = require("./routes/authRoute");
+const router = require("./routes/maintenance");
+const authRouter = require("./middleware/authMiddleware");
 app.use(route);
 app.use(dataRoute);
+app.use('/maintenance', router);
+app.use(authRouter);
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));

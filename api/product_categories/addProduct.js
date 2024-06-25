@@ -9,6 +9,7 @@ const {
     Diapers,
     Others
 } = require('../category_models/category');
+const UserLog = require('../model/UserLog');
 
 const addProduct = async (req, res) => {
     try {
@@ -31,6 +32,13 @@ const addProduct = async (req, res) => {
 
         const newProduct = new Model({ name, quantity, price, category });
         await newProduct.save();
+
+        // Log the action
+        await UserLog.create({
+            user: req.user ? req.user.username : 'System',
+            action: 'Added Product',
+            details: `Added ${name} to ${category} category`,
+        });
 
         res.status(201).json(newProduct);
     } catch (err) {
