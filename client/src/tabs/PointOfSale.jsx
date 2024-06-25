@@ -19,6 +19,7 @@ const PointOfSale = () => {
    const [total, setTotal] = useState(0);
    const [showReceipt, setShowReceipt] = useState(false);
    const [receiptData, setReceiptData] = useState(null);
+   const [hasSearched, setHasSearched] = useState(false);
 
    useEffect(() => {
       fetchProducts();
@@ -148,7 +149,10 @@ const PointOfSale = () => {
                   <input
                      type="text"
                      value={search}
-                     onChange={(e) => setSearch(e.target.value)}
+                     onChange={(e) => {
+                        setSearch(e.target.value);
+                        setHasSearched(true);
+                     }}
                      className="outline-none pr-3 pl-10 py-2 text-sm border border-gray-300 rounded-md"
                      placeholder="Search products..."
                   />
@@ -177,55 +181,61 @@ const PointOfSale = () => {
                   )}
                </div>
             </div>
-            <div className="mt-4 overflow-y-auto h-[calc(100vh-500px)] md:h-[calc(100vh-160px)] rounded-l-lg">
-               <table className="w-full overflow-hidden shadow-md rounded-tl-lg">
-                  <thead className="bg-gray-100">
-                     <tr>
-                        {["Name", "Price", "Quantity", "Action"].map(header => (
-                           <th key={header} className="border border-gray-200 py-4 font-medium">{header}</th>
-                        ))}
-                     </tr>
-                  </thead>
-                  <tbody className="bg-gray-50">
-                     {filteredProducts.map((product) => (
-                        <tr className="text-center" key={product._id}>
-                           <td className="border border-gray-200 py-4 break-words px-4 max-w-[100px] text-sm">
-                              {product.name}
-                           </td>
-                           <td className="border border-gray-200 py-4 break-words px-4 max-w-[100px] text-sm">
-                              P{product.price.toFixed(2)}
-                           </td>
-                           <td className="border border-gray-200 py-4 break-words px-4 max-w-[100px] text-sm">
-                              {product.quantity > 0 ? (
-                                 <input
-                                    type="number"
-                                    defaultValue="1"
-                                    min="1"
-                                    max={product.quantity}
-                                    className="w-16 p-1 border rounded outline-none px-2 text-sm py-1"
-                                    id={`quantity-${product._id}`}
-                                 />
-                              ) : (
-                                 <span className="text-red-500 font-medium">Out of Stock</span>
-                              )}
-                           </td>
-                           <td className="border border-gray-200 py-4">
-                              <button
-                                 className={`${product.quantity > 0 ? 'bg-blue-500 hover:bg-blue-600' : 'bg-gray-400 cursor-not-allowed'} text-white px-3 py-1 rounded-md text-sm mx-2 transition duration-300 ease-in-out`}
-                                 disabled={product.quantity === 0}
-                                 onClick={() => {
-                                    const quantity = parseInt(document.getElementById(`quantity-${product._id}`).value);
-                                    addToCart(product, quantity);
-                                 }}
-                              >
-                                 Add to Cart
-                              </button>
-                           </td>
+            {hasSearched && filteredProducts.length === 0 ? (
+               <div className="text-gray-600 h-[calc(100vh-160px)] grid place-items-center">
+                  No products found...
+               </div>
+            ) : (
+               <div className="mt-4 overflow-y-auto h-[calc(100vh-500px)] md:h-[calc(100vh-160px)] rounded-l-lg">
+                  <table className="w-full overflow-hidden shadow-md rounded-tl-lg">
+                     <thead className="bg-gray-100">
+                        <tr>
+                           {["Name", "Price", "Quantity", "Action"].map(header => (
+                              <th key={header} className="border border-gray-200 py-4 font-medium">{header}</th>
+                           ))}
                         </tr>
-                     ))}
-                  </tbody>
-               </table>
-            </div>
+                     </thead>
+                     <tbody className="bg-gray-50">
+                        {filteredProducts.map((product) => (
+                           <tr className="text-center" key={product._id}>
+                              <td className="border border-gray-200 py-4 break-words px-4 max-w-[100px] text-sm">
+                                 {product.name}
+                              </td>
+                              <td className="border border-gray-200 py-4 break-words px-4 max-w-[100px] text-sm">
+                                 P{product.price.toFixed(2)}
+                              </td>
+                              <td className="border border-gray-200 py-4 break-words px-4 max-w-[100px] text-sm">
+                                 {product.quantity > 0 ? (
+                                    <input
+                                       type="number"
+                                       defaultValue="1"
+                                       min="1"
+                                       max={product.quantity}
+                                       className="w-16 p-1 border rounded outline-none px-2 text-sm py-1"
+                                       id={`quantity-${product._id}`}
+                                    />
+                                 ) : (
+                                    <span className="text-red-500 font-medium">Out of Stock</span>
+                                 )}
+                              </td>
+                              <td className="border border-gray-200 py-4">
+                                 <button
+                                    className={`${product.quantity > 0 ? 'bg-blue-500 hover:bg-blue-600' : 'bg-gray-400 cursor-not-allowed'} text-white px-3 py-1 rounded-md text-sm mx-2 transition duration-300 ease-in-out`}
+                                    disabled={product.quantity === 0}
+                                    onClick={() => {
+                                       const quantity = parseInt(document.getElementById(`quantity-${product._id}`).value);
+                                       addToCart(product, quantity);
+                                    }}
+                                 >
+                                    Add to Cart
+                                 </button>
+                              </td>
+                           </tr>
+                        ))}
+                     </tbody>
+                  </table>
+               </div>
+            )}
          </div>
          <div className="bg-white shadow-md rounded-lg flex flex-col justify-between p-5">
             <div>

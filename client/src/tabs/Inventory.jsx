@@ -19,6 +19,7 @@ const Inventory = () => {
    const [newProduct, setNewProduct] = useState({ name: "", price: "", quantity: "", category: "" });
    const [showAddForm, setShowAddForm] = useState(false);
    const [report, setReport] = useState(null);
+   const [hasSearched, setHasSearched] = useState(false);
 
    useEffect(() => {
       fetchProducts();
@@ -132,7 +133,10 @@ const Inventory = () => {
                <input
                   type="text"
                   value={search}
-                  onChange={(e) => setSearch(e.target.value)}
+                  onChange={(e) => {
+                     setSearch(e.target.value);
+                     setHasSearched(true);
+                  }}
                   className="outline-none pr-3 pl-10 py-2 text-sm border border-gray-300 rounded-md w-full"
                   placeholder="Search products..."
                />
@@ -205,47 +209,53 @@ const Inventory = () => {
             </div>
          )}
 
-         <div className="mt-4 overflow-y-auto h-[calc(100vh-215px)] rounded-l-lg">
-            <table className="w-full rounded-md overflow-hidden shadow-md">
-               <thead className="bg-gray-100">
-                  <tr>
-                     {["Name", "Price", "Quantity", "Action"].map(header => (
-                        <th key={header} className="border border-gray-200 py-4 font-medium">{header}</th>
-                     ))}
-                  </tr>
-               </thead>
-               <tbody className="bg-gray-50">
-                  {filteredProducts.map((product, index) => (
-                     <tr className="text-center" key={index}>
-                        {["name", "price", "quantity"].map(field => (
-                           <td key={field} className="border border-gray-200 py-4 break-words px-4 max-w-[100px] text-sm">
-                              {editProduct?._id === product._id ? (
-                                 <input
-                                    type={field !== "name" ? "number" : "text"}
-                                    value={editProduct[field]}
-                                    onChange={(e) => setEditProduct({ ...editProduct, [field]: e.target.value })}
-                                    className="w-full p-1 border rounded outline-none px-3 text-sm py-2"
-                                 />
+         {hasSearched && filteredProducts.length === 0 ? (
+            <div className="text-gray-600 h-[calc(100vh-215px)] grid place-items-center">
+               No products found...
+            </div>
+         ) : (
+            <div className="mt-4 overflow-y-auto h-[calc(100vh-215px)] rounded-l-lg">
+               <table className="w-full rounded-md overflow-hidden shadow-md">
+                  <thead className="bg-gray-100">
+                     <tr>
+                        {["Name", "Price", "Quantity", "Action"].map(header => (
+                           <th key={header} className="border border-gray-200 py-4 font-medium">{header}</th>
+                        ))}
+                     </tr>
+                  </thead>
+                  <tbody className="bg-gray-50">
+                     {filteredProducts.map((product, index) => (
+                        <tr className="text-center" key={index}>
+                           {["name", "price", "quantity"].map(field => (
+                              <td key={field} className="border border-gray-200 py-4 break-words px-4 max-w-[100px] text-sm">
+                                 {editProduct?._id === product._id ? (
+                                    <input
+                                       type={field !== "name" ? "number" : "text"}
+                                       value={editProduct[field]}
+                                       onChange={(e) => setEditProduct({ ...editProduct, [field]: e.target.value })}
+                                       className="w-full p-1 border rounded outline-none px-3 text-sm py-2"
+                                    />
+                                 ) : (
+                                    field === "price" ? `P${product[field]}` : product[field]
+                                 )}
+                              </td>
+                           ))}
+                           <td className="border border-gray-200 py-4">
+                              {editProduct && editProduct._id === product._id ? (
+                                 <>
+                                    <button onClick={saveEdit} className="bg-green-500 text-white px-3 py-1 rounded-md text-sm mr-2">Save</button>
+                                    <button onClick={() => setEditProduct(null)} className="bg-red-500 text-white px-3 py-1 rounded-md text-sm">Cancel</button>
+                                 </>
                               ) : (
-                                 field === "price" ? `P${product[field]}` : product[field]
+                                 <button onClick={() => startEdit(product)} className="bg-blue-500 text-white px-3 py-1 rounded-md text-sm mx-2">Edit</button>
                               )}
                            </td>
-                        ))}
-                        <td className="border border-gray-200 py-4">
-                           {editProduct && editProduct._id === product._id ? (
-                              <>
-                                 <button onClick={saveEdit} className="bg-green-500 text-white px-3 py-1 rounded-md text-sm mr-2">Save</button>
-                                 <button onClick={() => setEditProduct(null)} className="bg-red-500 text-white px-3 py-1 rounded-md text-sm">Cancel</button>
-                              </>
-                           ) : (
-                              <button onClick={() => startEdit(product)} className="bg-blue-500 text-white px-3 py-1 rounded-md text-sm mx-2">Edit</button>
-                           )}
-                        </td>
-                     </tr>
-                  ))}
-               </tbody>
-            </table>
-         </div>
+                        </tr>
+                     ))}
+                  </tbody>
+               </table>
+            </div>
+         )}
          {report && <ReportModal report={report} onClose={() => setReport(null)} />}
       </div>
    );
