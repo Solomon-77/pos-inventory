@@ -19,7 +19,7 @@ const getDashboardData = async (req, res) => {
       today.setHours(0, 0, 0, 0);
 
       const dailySales = await Sale.aggregate([
-         { $match: { date: { $gte: today } } },
+         { $match: { date: { $gte: today }, status: 'successful' } },
          { $group: { _id: null, total: { $sum: '$total' } } }
       ]);
 

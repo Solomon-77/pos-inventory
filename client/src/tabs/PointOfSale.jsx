@@ -3,6 +3,7 @@ import axios from 'axios';
 import { IoSearchOutline } from "react-icons/io5";
 import { MdDelete } from "react-icons/md";
 import Receipt from '../sales/Receipt';
+import Billing from "../sales/Billing";
 import { MdRemoveShoppingCart } from "react-icons/md";
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -20,6 +21,8 @@ const PointOfSale = () => {
    const [showReceipt, setShowReceipt] = useState(false);
    const [receiptData, setReceiptData] = useState(null);
    const [hasSearched, setHasSearched] = useState(false);
+   const [showBilling, setShowBilling] = useState(false);
+   const [amountPaid, setAmountPaid] = useState(0);
 
    useEffect(() => {
       fetchProducts();
@@ -118,20 +121,25 @@ const PointOfSale = () => {
       setTotal(subtotal - discount);
    };
 
-   const handleCheckout = async () => {
+   const handleCheckout = () => {
       if (cart.length === 0) {
          alert("Cannot checkout with an empty cart.");
          return;
       }
+      setShowBilling(true);
+   };
 
-      const confirmed = window.confirm("Are you sure you want to proceed with the checkout?");
-      if (!confirmed) return;
+   const handleBillingCancel = () => {
+      setShowBilling(false);
+   };
 
+   const handleBillingConfirm = async (paidAmount) => {
       try {
          const response = await axios.post(`${API_URL}/checkout`, {
             cart,
             discountType,
-            total
+            total,
+            amountPaid: paidAmount
          });
          console.log('Checkout successful:', response.data);
          setReceiptData({
@@ -139,11 +147,15 @@ const PointOfSale = () => {
             total,
             discountType,
             date: new Date(),
-            saleId: response.data.saleId
+            saleId: response.data.saleId,
+            amountPaid: paidAmount,
+            change: paidAmount - total
          });
+         setShowBilling(false);
          setShowReceipt(true);
          setCart([]);
          setDiscountType('');
+         setAmountPaid(paidAmount);
       } catch (error) {
          console.error('Error during checkout:', error);
          alert('Error during checkout. Please try again.');
@@ -293,6 +305,17 @@ const PointOfSale = () => {
                </button>
             </div>
          </div>
+         {showBilling && (
+            <div className="fixed inset-0 z-20 p-4 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+               <Billing
+                  cart={cart}
+                  total={total}
+                  onCancel={handleBillingCancel}
+                  onConfirm={handleBillingConfirm}
+               />
+            </div>
+         )}
+
          {showReceipt && (
             <div className="fixed inset-0 z-20 p-4 bg-gray-600 bg-opacity-50 flex items-center justify-center">
                <div className="bg-white p-6 rounded-lg max-w-md w-full">

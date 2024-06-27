@@ -6,6 +6,7 @@ const { getSales } = require("../product_categories/getSales");
 const { updateSaleStatus } = require("../product_categories/updateSaleStatus");
 const { getDashboardData } = require("../product_categories/getDashboardData");
 const { getRevenueStatistics } = require("../product_categories/getRevenueStatistics");
+const { voidSale } = require("../product_categories/voidSale");
 
 const dataRoute = require("express").Router();
 
@@ -17,5 +18,6 @@ dataRoute.get("/getSales", getSales);
 dataRoute.put("/updateSaleStatus/:id", updateSaleStatus);
 dataRoute.get("/dashboardData", getDashboardData);
 dataRoute.get("/revenueStatistics", getRevenueStatistics);
+dataRoute.post('/voidSale/:id', voidSale);
 
 module.exports = dataRoute;

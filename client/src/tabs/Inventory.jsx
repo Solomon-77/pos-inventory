@@ -4,9 +4,10 @@ import axios from "axios";
 import ReportModal from "../inventory/ReportModal";
 
 const API_URL = import.meta.env.VITE_API_URL;
-const CATEGORIES = ["All", "Generic", "Branded", "Syrup", "Antibiotics", "OintmentDrops", "Cosmetics", "Diapers", "Others"];
+const CATEGORIES = ["All", "Low Stock", "Generic", "Branded", "Syrup", "Antibiotics", "Ointment/Drops", "Cosmetics", "Diapers", "Others"];
 
-const FAST_MOVING_THRESHOLD = 10;
+const LOW_STOCK_THRESHOLD = 20;
+const FAST_MOVING_THRESHOLD = 40;
 const SLOW_MOVING_THRESHOLD = 50;
 
 const Inventory = () => {
@@ -101,11 +102,25 @@ const Inventory = () => {
       }
    };
 
-   const filteredProducts = Object.entries(products).flatMap(([cat, items]) =>
-      (category === "All" || cat.toLowerCase() === category.toLowerCase())
-         ? items.filter(item => item.name.toLowerCase().includes(search.toLowerCase()))
-         : []
-   );
+   const filteredProducts = Object.entries(products).flatMap(([cat, items]) => {
+      if (category === "All") {
+         return items.filter(item => item.name.toLowerCase().includes(search.toLowerCase()));
+      } else if (category === "Low Stock") {
+         return items.filter(item =>
+            item.name.toLowerCase().includes(search.toLowerCase()) &&
+            item.quantity <= LOW_STOCK_THRESHOLD
+         );
+      } else {
+         // Handle the special case for "Ointment/Drops"
+         const categoryMatch = category === "Ointment/Drops"
+            ? cat.toLowerCase() === "ointmentdrops"
+            : cat.toLowerCase() === category.toLowerCase();
+
+         return categoryMatch
+            ? items.filter(item => item.name.toLowerCase().includes(search.toLowerCase()))
+            : [];
+      }
+   });
 
    const generateReport = (type) => {
       let reportData = [];
@@ -148,7 +163,7 @@ const Inventory = () => {
          case "low":
             title = "Low Stock Alert";
             reportData = Object.values(products).flat()
-               .filter(p => p.quantity < 6)
+               .filter(p => p.quantity <= LOW_STOCK_THRESHOLD)
                .sort((a, b) => a.quantity - b.quantity)
                .map(p => ({
                   name: p.name,
@@ -178,7 +193,7 @@ const Inventory = () => {
                   placeholder="Search products..."
                />
                <div className="relative inline-block text-left ml-2">
-                  <button onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)} className="inline-flex justify-between w-full rounded-md border border-gray-300 px-3 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none">
+                  <button onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)} className="inline-flex whitespace-nowrap justify-between w-full rounded-md border border-gray-300 px-3 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none">
                      {category}
                      <span className="ml-2">&#x25BC;</span>
                   </button>
@@ -235,7 +250,7 @@ const Inventory = () => {
                         className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                      >
                         <option value="">Select Category</option>
-                        {CATEGORIES.filter(cat => cat !== "All").map(cat => (
+                        {CATEGORIES.filter(cat => cat !== "All" && cat !== "Low Stock").map(cat => (
                            <option key={cat} value={cat.toLowerCase()}>{cat}</option>
                         ))}
                      </select>
@@ -265,7 +280,7 @@ const Inventory = () => {
                      {filteredProducts.map((product, index) => (
                         <tr className="text-center" key={index}>
                            {["name", "price", "quantity"].map(field => (
-                              <td key={field} className="border border-gray-200 py-4 break-words px-4 max-w-[100px] text-sm">
+                              <td key={field} className={`border border-gray-200 py-4 break-words px-4 max-w-[100px] text-sm ${field === "quantity" && product[field] <= LOW_STOCK_THRESHOLD ? "text-red-500 font-bold" : ""}`}>
                                  {editProduct?._id === product._id ? (
                                     <input
                                        type={field !== "name" ? "number" : "text"}

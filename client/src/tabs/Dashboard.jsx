@@ -95,9 +95,13 @@ const Dashboard = () => {
          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-white p-6 rounded-lg shadow-md">
                <h2 className="font-bold text-lg mb-4">Recent Orders</h2>
-               <ul className="space-y-2 h-[calc(100vh-400px)] overflow-auto text-sm">
+               <div className='flex justify-between font-medium mb-3'>
+                  <h1>Sales ID</h1>
+                  <h1>Total Amount</h1>
+               </div>
+               <ul className="space-y-2 h-[calc(100vh-430px)] overflow-auto text-sm">
                   {dashboardData.recentOrders.map((order, index) => (
-                     <li key={index} className="flex justify-between items-center">
+                     <li key={index} className="flex justify-between items-center text-gray-700">
                         <span>{order.id}</span>
                         <span>P{order.total.toFixed(2)}</span>
                      </li>
@@ -106,12 +110,11 @@ const Dashboard = () => {
             </div>
 
             <div className="bg-white p-6 rounded-lg shadow-md">
-               <h2 className="font-bold text-lg mb-3">Low Stock Items</h2>
-               <ul className="space-y-2 h-[calc(100vh-400px)] overflow-auto text-sm">
+               <h2 className="font-bold text-lg mb-3">List of Low Stock Items</h2>
+               <ul className="space-y-2 h-[calc(100vh-400px)] overflow-auto text-sm text-gray-700">
                   {dashboardData.lowStockItems.map((item, index) => (
                      <li key={index} className="flex justify-between items-center">
                         <span>{item.name}</span>
-                        <span className="text-red-500 mr-2">{item.quantity} left</span>
                      </li>
                   ))}
                </ul>

@@ -3,8 +3,11 @@ import { IoMdMenu } from "react-icons/io";
 import PropTypes from "prop-types";
 import { useState, useEffect } from "react";
 import axios from 'axios';
+import { IoNotifications } from "react-icons/io5";
+import ReportModal from "../inventory/ReportModal";  // Import the ReportModal component
 
 const URL = import.meta.env.VITE_API_URL;
+const LOW_STOCK_THRESHOLD = 20;  // Define the low stock threshold
 
 const Header = ({ toggle, setToggle }) => {
    const location = useLocation();
@@ -22,6 +25,10 @@ const Header = ({ toggle, setToggle }) => {
    const currentPathName = pathNames[location.pathname];
 
    const [userInfo, setUserInfo] = useState({ username: '', email: '', role: '' });
+   const [lowStockCount, setLowStockCount] = useState(0);
+   const [showNotification, setShowNotification] = useState(false);
+   const [showLowStockReport, setShowLowStockReport] = useState(false);
+   const [lowStockItems, setLowStockItems] = useState([]);
 
    useEffect(() => {
       const fetchUserInfo = async () => {
@@ -35,8 +42,30 @@ const Header = ({ toggle, setToggle }) => {
          }
       };
 
+      const fetchLowStockItems = async () => {
+         try {
+            const response = await axios.get(`${URL}/getAll`);
+            const allProducts = Object.values(response.data).flat();
+            const lowStockProducts = allProducts.filter(product => product.quantity <= LOW_STOCK_THRESHOLD);
+            setLowStockCount(lowStockProducts.length);
+            setLowStockItems(lowStockProducts);
+         } catch (error) {
+            console.error('Error fetching low stock items:', error);
+         }
+      };
+
       fetchUserInfo();
+      fetchLowStockItems();
    }, []);
+
+   const handleNotificationClick = () => {
+      setShowNotification(!showNotification);
+   };
+
+   const handleLowStockClick = () => {
+      setShowLowStockReport(true);
+      setShowNotification(false);
+   };
 
    return (
       <div className="grid grid-rows-[auto,1fr] p-4 overflow-auto">
@@ -45,14 +74,51 @@ const Header = ({ toggle, setToggle }) => {
                <IoMdMenu onClick={() => setToggle(!toggle)} className="text-4xl md:hidden mr-3 cursor-pointer" />
                <h1 className="font-bold text-lg">{currentPathName}</h1>
             </div>
-            <div className="bg-white flex items-center px-3 py-2 rounded-lg shadow-md">
-               <div className="text-sm">
-                  <h1 className='font-semibold'>{userInfo.username}</h1>
-                  <h1 className='text-gray-500'>{userInfo.role}</h1>
+            <div className='flex items-center'>
+               <div className="relative">
+                  <IoNotifications
+                     onClick={handleNotificationClick}
+                     className='text-2xl mr-6 text-gray-700 cursor-pointer'
+                  />
+                  {lowStockCount > 0 && (
+                     <span className="absolute top-0 right-[18px] inline-flex items-center justify-center p-1 text-xs leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
+                        {lowStockCount}
+                     </span>
+                  )}
+                  {showNotification && (
+                     <div className="absolute right-4 mt-2 w-48 bg-white rounded-md overflow-hidden shadow-xl z-10">
+                        <div
+                           className="px-4 whitespace-nowrap py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                           onClick={handleLowStockClick}
+                        >
+                           Low Stock Items are <span className='font-bold'>{lowStockCount}</span>
+                        </div>
+                     </div>
+                  )}
+               </div>
+               <div className="bg-white flex items-center px-3 py-2 rounded-lg shadow-md">
+                  <div className="text-sm">
+                     <h1 className='font-semibold'>{userInfo.username}</h1>
+                     <h1 className='text-gray-500'>{userInfo.role}</h1>
+                  </div>
                </div>
             </div>
          </nav>
          <Outlet />
+         {showLowStockReport && (
+            <ReportModal
+               report={{
+                  title: "Low Stock Alert",
+                  data: lowStockItems.map(item => ({
+                     name: item.name,
+                     quantity: item.quantity,
+                     category: item.category,
+                     price: item.price
+                  }))
+               }}
+               onClose={() => setShowLowStockReport(false)}
+            />
+         )}
       </div>
    );
 };

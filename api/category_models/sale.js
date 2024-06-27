@@ -40,8 +40,16 @@ const saleSchema = new Schema({
    items: [saleItemSchema],
    status: {
       type: String,
-      enum: ['pending', 'paid', 'cancelled'],
-      default: 'pending'
+      enum: ['successful', 'voided'],
+      default: 'successful'
+   },
+   amountPaid: {
+      type: Number,
+      required: true
+   },
+   change: {
+      type: Number,
+      required: true
    }
 });
 

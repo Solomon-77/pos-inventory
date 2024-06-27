@@ -5,25 +5,6 @@ import { jwtDecode } from "jwt-decode";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-const OrderStatusSelect = ({ status, saleId, onStatusChange }) => {
-   const handleChange = async (e) => {
-      const newStatus = e.target.value;
-      onStatusChange(saleId, newStatus);
-   };
-
-   return (
-      <select
-         value={status}
-         onChange={handleChange}
-         className="p-1 border rounded"
-      >
-         <option value="pending">Pending</option>
-         <option value="paid">Paid</option>
-         <option value="cancelled">Cancelled</option>
-      </select>
-   );
-};
-
 const Sales = () => {
    const [sales, setSales] = useState([]);
    const [selectedReceipt, setSelectedReceipt] = useState(null);
@@ -62,19 +43,18 @@ const Sales = () => {
       fetchRevenueStatistics();
    }, [fetchSales, fetchRevenueStatistics]);
 
-   const handleStatusChange = async (saleId, newStatus) => {
+   const handleVoidSale = async (saleId) => {
+      const confirmed = window.confirm("Are you sure you want to void this sale?");
+      if (!confirmed) return;
+
       try {
-         const response = await axios.put(`${API_URL}/updateSaleStatus/${saleId}`, { status: newStatus });
-         
-         // Update the local state immediately
-         setSales(prevSales => prevSales.map(sale =>
-            sale._id === saleId ? { ...sale, status: newStatus } : sale
-         ));
-         
-         // Update revenue stats
+         const response = await axios.post(`${API_URL}/voidSale/${saleId}`);
+         fetchSales();
          setRevenueStats(response.data.revenueStats);
+         alert("Sale voided successfully");
       } catch (error) {
-         console.error('Error updating sale status:', error);
+         console.error('Error voiding sale:', error);
+         alert('Error voiding sale. Please try again.');
       }
    };
 
@@ -84,7 +64,9 @@ const Sales = () => {
          total: sale.total,
          discountType: sale.discountType,
          date: new Date(sale.date),
-         saleId: sale._id
+         saleId: sale._id,
+         amountPaid: sale.amountPaid,
+         change: sale.change
       });
    };
 
@@ -138,19 +120,23 @@ const Sales = () => {
                            </div>
                         </td>
                         <td className="py-2 px-4 border">
-                           <OrderStatusSelect
-                              status={sale.status}
-                              saleId={sale._id}
-                              onStatusChange={handleStatusChange}
-                           />
+                           {sale.status === 'voided' ? 'Voided' : 'Successful'}
                         </td>
-                        <td className="py-2 px-4 border">
+                        <td className="py-2 px-4 border flex justify-center">
                            <button
                               onClick={() => handleViewReceipt(sale)}
-                              className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-[5px] rounded-md text-xs"
+                              className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-[5px] rounded-md text-xs mr-2"
                            >
                               View Receipt
                            </button>
+                           {sale.status !== 'voided' && (
+                              <button
+                                 onClick={() => handleVoidSale(sale._id)}
+                                 className="bg-red-500 hover:bg-red-600 text-white px-2 py-[5px] rounded-md text-xs"
+                              >
+                                 Void
+                              </button>
+                           )}
                         </td>
                      </tr>
                   ))}

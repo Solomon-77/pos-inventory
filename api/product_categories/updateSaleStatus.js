@@ -8,15 +8,15 @@ const recalculateRevenue = async () => {
 
    const [dailyRevenue, weeklyRevenue, monthlyRevenue] = await Promise.all([
       Sale.aggregate([
-         { $match: { date: { $gte: today }, status: 'paid' } },
+         { $match: { date: { $gte: today }, status: 'successful' } },
          { $group: { _id: null, total: { $sum: '$total' } } }
       ]),
       Sale.aggregate([
-         { $match: { date: { $gte: oneWeekAgo }, status: 'paid' } },
+         { $match: { date: { $gte: oneWeekAgo }, status: 'successful' } },
          { $group: { _id: null, total: { $sum: '$total' } } }
       ]),
       Sale.aggregate([
-         { $match: { date: { $gte: oneMonthAgo }, status: 'paid' } },
+         { $match: { date: { $gte: oneMonthAgo }, status: 'successful' } },
          { $group: { _id: null, total: { $sum: '$total' } } }
       ])
    ]);
@@ -48,4 +48,4 @@ const updateSaleStatus = async (req, res) => {
    }
 };
 
-module.exports = { updateSaleStatus };
+module.exports = { updateSaleStatus, recalculateRevenue };
