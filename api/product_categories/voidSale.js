@@ -1,4 +1,3 @@
-// voidSale.js
 const Sale = require('../category_models/sale');
 const { recalculateRevenue } = require('./updateSaleStatus');
 const {
@@ -16,17 +15,14 @@ const {
 const voidSale = async (req, res) => {
    try {
       const { id } = req.params;
-
+      const { reason } = req.body;
       const sale = await Sale.findById(id);
-
       if (!sale) {
          return res.status(404).json({ message: 'Sale not found' });
       }
-
       if (sale.status === 'voided') {
          return res.status(400).json({ message: 'Sale is already voided' });
       }
-
       // Restore inventory
       for (const item of sale.items) {
          let Model;
@@ -43,16 +39,13 @@ const voidSale = async (req, res) => {
             default:
                return res.status(400).json({ error: 'Invalid category' });
          }
-
          await Model.findByIdAndUpdate(item.productId, { $inc: { quantity: item.quantity } });
       }
-
-      // Update sale status to voided
+      // Update sale status to voided and add reason
       sale.status = 'voided';
+      sale.voidReason = reason;
       await sale.save();
-
       const revenueStats = await recalculateRevenue();
-
       res.status(200).json({ updatedSale: sale, revenueStats });
    } catch (error) {
       console.error('Error voiding sale:', error);

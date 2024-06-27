@@ -43,6 +43,10 @@ const saleSchema = new Schema({
       enum: ['successful', 'voided'],
       default: 'successful'
    },
+   voidReason: {
+      type: String,
+      default: ''
+   },
    amountPaid: {
       type: Number,
       required: true

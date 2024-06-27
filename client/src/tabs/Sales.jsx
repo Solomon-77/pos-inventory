@@ -14,6 +14,9 @@ const Sales = () => {
       monthlyRevenue: 0
    });
    const [userRole, setUserRole] = useState("");
+   const [showVoidModal, setShowVoidModal] = useState(false);
+   const [selectedSaleId, setSelectedSaleId] = useState(null);
+   const [voidReason, setVoidReason] = useState("");
 
    const fetchSales = useCallback(async () => {
       try {
@@ -43,14 +46,16 @@ const Sales = () => {
       fetchRevenueStatistics();
    }, [fetchSales, fetchRevenueStatistics]);
 
-   const handleVoidSale = async (saleId) => {
-      const confirmed = window.confirm("Are you sure you want to void this sale?");
-      if (!confirmed) return;
+   const handleVoidSale = async () => {
+      if (!selectedSaleId || !voidReason.trim()) return;
 
       try {
-         const response = await axios.post(`${API_URL}/voidSale/${saleId}`);
+         const response = await axios.post(`${API_URL}/voidSale/${selectedSaleId}`, { reason: voidReason });
          fetchSales();
          setRevenueStats(response.data.revenueStats);
+         setShowVoidModal(false);
+         setSelectedSaleId(null);
+         setVoidReason("");
          alert("Sale voided successfully");
       } catch (error) {
          console.error('Error voiding sale:', error);
@@ -120,9 +125,20 @@ const Sales = () => {
                            </div>
                         </td>
                         <td className="py-2 px-4 border">
-                           {sale.status === 'voided' ? 'Voided' : 'Successful'}
+                           {sale.status === 'voided' ? (
+                              <div>
+                                 <span className="font-semibold text-red-600">Voided</span>
+                                 {sale.voidReason && (
+                                    <p className="text-xs text-gray-500 font-medium mt-1">
+                                       Reason: {sale.voidReason}
+                                    </p>
+                                 )}
+                              </div>
+                           ) : (
+                              <h1 className='font-semibold text-green-600'>Successful</h1>
+                           )}
                         </td>
-                        <td className="py-2 px-4 border flex justify-center">
+                        <td className="p-2 whitespace-nowrap">
                            <button
                               onClick={() => handleViewReceipt(sale)}
                               className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-[5px] rounded-md text-xs mr-2"
@@ -131,7 +147,10 @@ const Sales = () => {
                            </button>
                            {sale.status !== 'voided' && (
                               <button
-                                 onClick={() => handleVoidSale(sale._id)}
+                                 onClick={() => {
+                                    setSelectedSaleId(sale._id);
+                                    setShowVoidModal(true);
+                                 }}
                                  className="bg-red-500 hover:bg-red-600 text-white px-2 py-[5px] rounded-md text-xs"
                               >
                                  Void
@@ -154,6 +173,39 @@ const Sales = () => {
                   >
                      Close
                   </button>
+               </div>
+            </div>
+         )}
+
+         {showVoidModal && (
+            <div className="fixed z-20 inset-0 p-4 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+               <div className="bg-white p-6 rounded-lg max-w-md w-full">
+                  <h2 className="text-lg font-semibold mb-4">Void Sale</h2>
+                  <textarea
+                     value={voidReason}
+                     onChange={(e) => setVoidReason(e.target.value)}
+                     placeholder="Enter reason for voiding the sale"
+                     className="w-full outline-none border-gray-500 p-2 border rounded-md mb-4"
+                     rows="3"
+                  />
+                  <div className="flex justify-end">
+                     <button
+                        onClick={() => {
+                           setShowVoidModal(false);
+                           setSelectedSaleId(null);
+                           setVoidReason("");
+                        }}
+                        className="bg-gray-500 hover:bg-gray-600 text-sm text-white px-4 py-2 rounded-md mr-2"
+                     >
+                        Cancel
+                     </button>
+                     <button
+                        onClick={handleVoidSale}
+                        className="bg-red-500 hover:bg-red-600 text-sm text-white px-4 py-2 rounded-md"
+                     >
+                        Confirm Void
+                     </button>
+                  </div>
                </div>
             </div>
          )}
