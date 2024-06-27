@@ -4,7 +4,7 @@ import axios from "axios";
 import ReportModal from "../inventory/ReportModal";
 
 const API_URL = import.meta.env.VITE_API_URL;
-const CATEGORIES = ["All", "Low Stock", "Generic", "Branded", "Syrup", "Antibiotics", "Ointment/Drops", "Cosmetics", "Diapers", "Others"];
+const CATEGORIES = ["All", "Low Stock", "Out of Stock", "Generic", "Branded", "Syrup", "Antibiotics", "Ointment/Drops", "Cosmetics", "Diapers", "Others"];
 
 const LOW_STOCK_THRESHOLD = 20;
 const FAST_MOVING_THRESHOLD = 40;
@@ -108,7 +108,12 @@ const Inventory = () => {
       } else if (category === "Low Stock") {
          return items.filter(item =>
             item.name.toLowerCase().includes(search.toLowerCase()) &&
-            item.quantity <= LOW_STOCK_THRESHOLD
+            item.quantity <= LOW_STOCK_THRESHOLD && item.quantity > 0
+         );
+      } else if (category === "Out of Stock") {
+         return items.filter(item =>
+            item.name.toLowerCase().includes(search.toLowerCase()) &&
+            item.quantity === 0
          );
       } else {
          // Handle the special case for "Ointment/Drops"
@@ -165,6 +170,17 @@ const Inventory = () => {
             reportData = Object.values(products).flat()
                .filter(p => p.quantity <= LOW_STOCK_THRESHOLD)
                .sort((a, b) => a.quantity - b.quantity)
+               .map(p => ({
+                  name: p.name,
+                  quantity: p.quantity,
+                  category: p.category,
+                  price: p.price
+               }));
+            break;
+         case "out":
+            title = "Out of Stock Items";
+            reportData = Object.values(products).flat()
+               .filter(p => p.quantity === 0)
                .map(p => ({
                   name: p.name,
                   quantity: p.quantity,

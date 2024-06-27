@@ -4,10 +4,10 @@ import PropTypes from "prop-types";
 import { useState, useEffect } from "react";
 import axios from 'axios';
 import { IoNotifications } from "react-icons/io5";
-import ReportModal from "../inventory/ReportModal";  // Import the ReportModal component
+import ReportModal from "../inventory/ReportModal";
 
 const URL = import.meta.env.VITE_API_URL;
-const LOW_STOCK_THRESHOLD = 20;  // Define the low stock threshold
+const LOW_STOCK_THRESHOLD = 20;
 
 const Header = ({ toggle, setToggle }) => {
    const location = useLocation();
@@ -26,9 +26,12 @@ const Header = ({ toggle, setToggle }) => {
 
    const [userInfo, setUserInfo] = useState({ username: '', email: '', role: '' });
    const [lowStockCount, setLowStockCount] = useState(0);
+   const [outOfStockCount, setOutOfStockCount] = useState(0);
    const [showNotification, setShowNotification] = useState(false);
    const [showLowStockReport, setShowLowStockReport] = useState(false);
+   const [showOutOfStockReport, setShowOutOfStockReport] = useState(false);
    const [lowStockItems, setLowStockItems] = useState([]);
+   const [outOfStockItems, setOutOfStockItems] = useState([]);
 
    useEffect(() => {
       const fetchUserInfo = async () => {
@@ -42,20 +45,23 @@ const Header = ({ toggle, setToggle }) => {
          }
       };
 
-      const fetchLowStockItems = async () => {
+      const fetchStockItems = async () => {
          try {
             const response = await axios.get(`${URL}/getAll`);
             const allProducts = Object.values(response.data).flat();
-            const lowStockProducts = allProducts.filter(product => product.quantity <= LOW_STOCK_THRESHOLD);
+            const lowStockProducts = allProducts.filter(product => product.quantity <= LOW_STOCK_THRESHOLD && product.quantity > 0);
+            const outOfStockProducts = allProducts.filter(product => product.quantity === 0);
             setLowStockCount(lowStockProducts.length);
             setLowStockItems(lowStockProducts);
+            setOutOfStockCount(outOfStockProducts.length);
+            setOutOfStockItems(outOfStockProducts);
          } catch (error) {
-            console.error('Error fetching low stock items:', error);
+            console.error('Error fetching stock items:', error);
          }
       };
 
       fetchUserInfo();
-      fetchLowStockItems();
+      fetchStockItems();
    }, []);
 
    const handleNotificationClick = () => {
@@ -64,6 +70,11 @@ const Header = ({ toggle, setToggle }) => {
 
    const handleLowStockClick = () => {
       setShowLowStockReport(true);
+      setShowNotification(false);
+   };
+
+   const handleOutOfStockClick = () => {
+      setShowOutOfStockReport(true);
       setShowNotification(false);
    };
 
@@ -80,18 +91,24 @@ const Header = ({ toggle, setToggle }) => {
                      onClick={handleNotificationClick}
                      className='text-2xl mr-6 text-gray-700 cursor-pointer'
                   />
-                  {lowStockCount > 0 && (
+                  {(lowStockCount > 0 || outOfStockCount > 0) && (
                      <span className="absolute top-0 right-[18px] inline-flex items-center justify-center p-1 text-xs leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
-                        {lowStockCount}
+                        {lowStockCount + outOfStockCount}
                      </span>
                   )}
                   {showNotification && (
-                     <div className="absolute right-4 mt-2 w-48 bg-white rounded-md overflow-hidden shadow-xl z-10">
+                     <div className="absolute right-4 mt-2 w-60 bg-white rounded-md overflow-hidden shadow-xl z-10">
                         <div
-                           className="px-4 whitespace-nowrap py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                           className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
                            onClick={handleLowStockClick}
                         >
-                           Low Stock Items are <span className='font-bold'>{lowStockCount}</span>
+                           Low Stock Items: <span className='font-bold'>{lowStockCount}</span>
+                        </div>
+                        <div
+                           className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                           onClick={handleOutOfStockClick}
+                        >
+                           Out of Stock Items: <span className='font-bold'>{outOfStockCount}</span>
                         </div>
                      </div>
                   )}
@@ -117,6 +134,20 @@ const Header = ({ toggle, setToggle }) => {
                   }))
                }}
                onClose={() => setShowLowStockReport(false)}
+            />
+         )}
+         {showOutOfStockReport && (
+            <ReportModal
+               report={{
+                  title: "Out of Stock Items",
+                  data: outOfStockItems.map(item => ({
+                     name: item.name,
+                     quantity: item.quantity,
+                     category: item.category,
+                     price: item.price
+                  }))
+               }}
+               onClose={() => setShowOutOfStockReport(false)}
             />
          )}
       </div>
