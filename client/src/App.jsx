@@ -13,6 +13,7 @@ import { jwtDecode } from "jwt-decode";
 import Maintenance from "./tabs/Maintenance";
 import Help from "./tabs/Help";
 import About from "./tabs/About";
+import Print from "./tabs/Print";
 
 const App = () => {
    const token = localStorage.getItem("token");
@@ -34,6 +35,7 @@ const App = () => {
                      {role === "cashier" && <Route path="/pos" element={<PointOfSale />} />}
                      {role === "admin" && <Route path="/inventory" element={<Inventory />} />}
                      <Route path="/sales" element={<Sales />} />
+                     {role === "admin" && <Route path="/print" element={<Print />} />}
                      {role === "admin" && <Route path="/maintenance" element={<Maintenance />} />}
                      <Route path="/help" element={<Help />} />
                      <Route path="/about" element={<About />} />

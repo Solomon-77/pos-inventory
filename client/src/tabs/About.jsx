@@ -10,14 +10,23 @@ const About = () => {
   return (
     <div className="min-h-screen px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
-        <h1 className="text-2xl font-bold mb-6 text-center">About Our GenMed Pharmacy Management System</h1>
-
+        <h1 className="text-xl font-bold mb-6 text-center">About Our GenMed Pharmacy Management System</h1>
+        <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-8">
+          <div className="px-4 py-5 sm:px-6">
+            <h2 className="text-lg text-center font-semibold leading-6 mb-2 text-gray-900">
+              Welcome to GenMed Pharmacy Management System
+            </h2>
+            <p className="mt-1 text-sm text-gray-500">
+              Our system is designed to streamline pharmacy operations, enhance inventory management, and improve customer service. With features like point of sale, real-time stock tracking, inventory management, and sales analytics, Medinet software helps pharmacies to operate more efficiently and provide better service to their customers.
+            </p>
+          </div>
+        </div>
         <div className="bg-white shadow overflow-hidden sm:rounded-lg">
           <div className="px-4 py-5 sm:px-6">
             <h2 className="text-xl text-center leading-6 font-medium text-gray-900">
               Our Development Team
             </h2>
-            <p className="mt-1 text-center mt-2 text-sm text-gray-500">
+            <p className="text-center mt-2 text-sm text-gray-500">
               Meet the people behind our genmed pharmacy point of sale and inventory management system
             </p>
           </div>
@@ -67,10 +76,16 @@ const About = () => {
                 NodeJS: v20.13.1
               </p>
               <p className="mt-2">
+                Express: v4.19.2
+              </p>
+              <p className="mt-2">
                 React: v18.2.0
               </p>
               <p className="mt-2">
-                Tailwind: v3.4.4
+                MongoDB: v8.0.0
+              </p>
+              <p className="mt-2">
+                Tailwind CSS: v3.4.4
               </p>
               <p className="mt-2">
                 Build Tool: Vite

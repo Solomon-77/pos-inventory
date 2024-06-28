@@ -11,6 +11,7 @@ import { IoMdClose } from "react-icons/io";
 import PropTypes from "prop-types";
 import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
+import { AiOutlinePrinter } from "react-icons/ai";
 
 const SideNav = ({ toggle, setToggle }) => {
    const location = useLocation();
@@ -67,6 +68,11 @@ const SideNav = ({ toggle, setToggle }) => {
                <Link onClick={close} to="/sales" className={`${isActive("/sales")} ${style}`}>
                   <TbProgressAlert className="mr-3" />Sales
                </Link>
+               {userRole === "admin" && (
+                  <Link onClick={close} to="/print" className={`${isActive("/print")} ${style}`}>
+                     <AiOutlinePrinter className="mr-3" />Print
+                  </Link>
+               )}
                {userRole === "admin" && (
                   <Link onClick={close} to="/maintenance" className={`${isActive("/maintenance")} ${style}`}>
                      <GrVmMaintenance className="mr-3" />Maintenance

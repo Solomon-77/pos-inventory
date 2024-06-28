@@ -16,6 +16,7 @@ const Header = ({ toggle, setToggle }) => {
       "/pos": "Point of Sale",
       "/inventory": "Inventory",
       "/sales": "Sales",
+      "/print": "Print",
       "/maintenance": "Maintenance",
       "/help": "Help",
       "/about": "About Us",
@@ -49,7 +50,7 @@ const Header = ({ toggle, setToggle }) => {
          try {
             const response = await axios.get(`${URL}/getAll`);
             const allProducts = Object.values(response.data).flat();
-            const lowStockProducts = allProducts.filter(product => 
+            const lowStockProducts = allProducts.filter(product =>
                product.quantity <= (product.criticalLevel || DEFAULT_CRITICAL_LEVEL) && product.quantity > 0
             );
             const outOfStockProducts = allProducts.filter(product => product.quantity === 0);
