@@ -13,7 +13,7 @@ const UserLog = require('../model/UserLog');
 
 const addProduct = async (req, res) => {
     try {
-        const { category, name, quantity, price } = req.body;
+        const { category, name, quantity, price, criticalLevel } = req.body;
 
         let Model;
         switch (category.toLowerCase()) {
@@ -30,14 +30,14 @@ const addProduct = async (req, res) => {
                 return res.status(400).json({ error: 'Invalid category' });
         }
 
-        const newProduct = new Model({ name, quantity, price, category });
+        const newProduct = new Model({ name, quantity, price, category, criticalLevel });
         await newProduct.save();
 
         // Log the action
         await UserLog.create({
             user: req.user ? req.user.username : 'System',
             action: 'Added Product',
-            details: `Added ${name} to ${category} category`,
+            details: `Added ${name} to ${category} category with critical level ${criticalLevel}`,
         });
 
         res.status(201).json(newProduct);

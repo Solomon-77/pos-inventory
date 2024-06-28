@@ -6,9 +6,10 @@ import ReportModal from "../inventory/ReportModal";
 const API_URL = import.meta.env.VITE_API_URL;
 const CATEGORIES = ["All", "Low Stock", "Out of Stock", "Generic", "Branded", "Syrup", "Antibiotics", "Ointment/Drops", "Cosmetics", "Diapers", "Others"];
 
-const LOW_STOCK_THRESHOLD = 20;
+
 const FAST_MOVING_THRESHOLD = 40;
 const SLOW_MOVING_THRESHOLD = 50;
+const DEFAULT_CRITICAL_LEVEL = 20;
 
 const Inventory = () => {
    const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
@@ -17,7 +18,7 @@ const Inventory = () => {
    const [products, setProducts] = useState({});
    const [category, setCategory] = useState("All");
    const [editProduct, setEditProduct] = useState(null);
-   const [newProduct, setNewProduct] = useState({ name: "", price: "", quantity: "", category: "" });
+   const [newProduct, setNewProduct] = useState({ name: "", price: "", quantity: "", category: "", criticalLevel: DEFAULT_CRITICAL_LEVEL });
    const [showAddForm, setShowAddForm] = useState(false);
    const [report, setReport] = useState(null);
    const [hasSearched, setHasSearched] = useState(false);
@@ -40,7 +41,7 @@ const Inventory = () => {
    const startEdit = (product) => setEditProduct({ ...product, originalName: product.name });
 
    const validateInput = (field, value) => {
-      if (field === "price" || field === "quantity") {
+      if (field === "price" || field === "quantity" || field === "criticalLevel") {
          const numValue = Number(value);
          if (numValue < 0) {
             setError(`${field.charAt(0).toUpperCase() + field.slice(1)} cannot be negative.`);
@@ -54,13 +55,19 @@ const Inventory = () => {
             setError("Price cannot be more than 1,000,000.");
             return false;
          }
+         if (field === "criticalLevel" && numValue > 1000) {
+            setError("Critical Level cannot be more than 1,000.");
+            return false;
+         }
       }
       setError("");
       return true;
    };
 
    const saveEdit = async () => {
-      if (!validateInput("price", editProduct.price) || !validateInput("quantity", editProduct.quantity)) {
+      if (!validateInput("price", editProduct.price) ||
+         !validateInput("quantity", editProduct.quantity) ||
+         !validateInput("criticalLevel", editProduct.criticalLevel)) {
          return;
       }
       try {
@@ -69,7 +76,8 @@ const Inventory = () => {
             currentName: editProduct.originalName,
             newName: editProduct.name,
             price: editProduct.price,
-            quantity: editProduct.quantity
+            quantity: editProduct.quantity,
+            criticalLevel: editProduct.criticalLevel
          });
          setEditProduct(null);
          fetchProducts();
@@ -79,12 +87,14 @@ const Inventory = () => {
    };
 
    const addProduct = async () => {
-      if (!validateInput("price", newProduct.price) || !validateInput("quantity", newProduct.quantity)) {
+      if (!validateInput("price", newProduct.price) ||
+         !validateInput("quantity", newProduct.quantity) ||
+         !validateInput("criticalLevel", newProduct.criticalLevel)) {
          return;
       }
       try {
          await axios.post(`${API_URL}/addProduct`, newProduct);
-         setNewProduct({ name: "", price: "", quantity: "", category: "" });
+         setNewProduct({ name: "", price: "", quantity: "", category: "", criticalLevel: DEFAULT_CRITICAL_LEVEL });
          setShowAddForm(false);
          fetchProducts();
       } catch (error) {
@@ -108,7 +118,8 @@ const Inventory = () => {
       } else if (category === "Low Stock") {
          return items.filter(item =>
             item.name.toLowerCase().includes(search.toLowerCase()) &&
-            item.quantity <= LOW_STOCK_THRESHOLD && item.quantity > 0
+            item.quantity <= (item.criticalLevel || DEFAULT_CRITICAL_LEVEL) &&
+            item.quantity > 0
          );
       } else if (category === "Out of Stock") {
          return items.filter(item =>
@@ -116,7 +127,6 @@ const Inventory = () => {
             item.quantity === 0
          );
       } else {
-         // Handle the special case for "Ointment/Drops"
          const categoryMatch = category === "Ointment/Drops"
             ? cat.toLowerCase() === "ointmentdrops"
             : cat.toLowerCase() === category.toLowerCase();
@@ -138,7 +148,8 @@ const Inventory = () => {
                name: p.name,
                quantity: p.quantity,
                category: p.category,
-               price: p.price
+               price: p.price,
+               criticalLevel: p.criticalLevel || DEFAULT_CRITICAL_LEVEL
             }));
             break;
          case "fast":
@@ -150,7 +161,8 @@ const Inventory = () => {
                   name: p.name,
                   quantity: p.quantity,
                   category: p.category,
-                  price: p.price
+                  price: p.price,
+                  criticalLevel: p.criticalLevel || DEFAULT_CRITICAL_LEVEL
                }));
             break;
          case "slow":
@@ -162,19 +174,21 @@ const Inventory = () => {
                   name: p.name,
                   quantity: p.quantity,
                   category: p.category,
-                  price: p.price
+                  price: p.price,
+                  criticalLevel: p.criticalLevel || DEFAULT_CRITICAL_LEVEL
                }));
             break;
          case "low":
             title = "Low Stock Alert";
             reportData = Object.values(products).flat()
-               .filter(p => p.quantity <= LOW_STOCK_THRESHOLD)
+               .filter(p => p.quantity <= (p.criticalLevel || DEFAULT_CRITICAL_LEVEL))
                .sort((a, b) => a.quantity - b.quantity)
                .map(p => ({
                   name: p.name,
                   quantity: p.quantity,
                   category: p.category,
-                  price: p.price
+                  price: p.price,
+                  criticalLevel: p.criticalLevel || DEFAULT_CRITICAL_LEVEL
                }));
             break;
          case "out":
@@ -185,7 +199,8 @@ const Inventory = () => {
                   name: p.name,
                   quantity: p.quantity,
                   category: p.category,
-                  price: p.price
+                  price: p.price,
+                  criticalLevel: p.criticalLevel || DEFAULT_CRITICAL_LEVEL
                }));
             break;
       }
@@ -246,10 +261,12 @@ const Inventory = () => {
             <div className="mt-4 p-5 bg-gray-100 rounded-md shadow-md">
                <h3 className="text-lg font-semibold mb-2">Add New Product</h3>
                {error && <p className="text-red-500 mb-2">{error}</p>}
-               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {["name", "price", "quantity"].map(field => (
+               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  {["name", "price", "quantity", "criticalLevel"].map(field => (
                      <div key={field}>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">{field.charAt(0).toUpperCase() + field.slice(1)}</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                           {field === "criticalLevel" ? "Critical Level" : field.charAt(0).toUpperCase() + field.slice(1)}
+                        </label>
                         <input
                            type={field !== "name" ? "number" : "text"}
                            value={newProduct[field]}
@@ -287,7 +304,7 @@ const Inventory = () => {
                <table className="w-full rounded-md overflow-hidden shadow-md">
                   <thead className="bg-gray-100">
                      <tr>
-                        {["Name", "Price", "Quantity", "Action"].map(header => (
+                        {["Name", "Price", "Quantity", "Critical Level", "Action"].map(header => (
                            <th key={header} className="border border-gray-200 py-4 font-medium">{header}</th>
                         ))}
                      </tr>
@@ -295,8 +312,11 @@ const Inventory = () => {
                   <tbody className="bg-gray-50">
                      {filteredProducts.map((product, index) => (
                         <tr className="text-center" key={index}>
-                           {["name", "price", "quantity"].map(field => (
-                              <td key={field} className={`border border-gray-200 py-4 break-words px-4 max-w-[100px] text-sm ${field === "quantity" && product[field] <= LOW_STOCK_THRESHOLD ? "text-red-500 font-bold" : ""}`}>
+                           {["name", "price", "quantity", "criticalLevel"].map(field => (
+                              <td key={field} className={`border border-gray-200 py-4 break-words px-4 max-w-[100px] text-sm ${field === "quantity" && product[field] <= (product.criticalLevel || DEFAULT_CRITICAL_LEVEL)
+                                 ? "text-red-500 font-bold"
+                                 : ""
+                                 }`}>
                                  {editProduct?._id === product._id ? (
                                     <input
                                        type={field !== "name" ? "number" : "text"}
@@ -327,6 +347,7 @@ const Inventory = () => {
          )}
          {report && <ReportModal report={report} onClose={() => setReport(null)} />}
       </div>
+
    );
 };
 

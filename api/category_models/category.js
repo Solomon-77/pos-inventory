@@ -16,6 +16,10 @@ const baseSchema = {
    category: {
       type: String,
       required: true
+   },
+   criticalLevel: {
+      type: Number,
+      default: 20
    }
 };
 

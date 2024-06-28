@@ -13,7 +13,7 @@ const UserLog = require('../model/UserLog');
 
 const updateProduct = async (req, res) => {
    try {
-      const { category, currentName, newName, quantity, price } = req.body;
+      const { category, currentName, newName, quantity, price, criticalLevel } = req.body;
 
       let Model;
       switch (category.toLowerCase()) {
@@ -48,6 +48,10 @@ const updateProduct = async (req, res) => {
          updateDetails.push(`price from ${product.price} to ${price}`);
          product.price = price;
       }
+      if (criticalLevel !== undefined && criticalLevel !== product.criticalLevel) {
+         updateDetails.push(`critical level from ${product.criticalLevel} to ${criticalLevel}`);
+         product.criticalLevel = criticalLevel;
+      }
 
       await product.save();
 
@@ -65,5 +69,7 @@ const updateProduct = async (req, res) => {
       res.status(500).json({ error: err.message });
    }
 };
+
+module.exports = { updateProduct };
 
 module.exports = { updateProduct };
