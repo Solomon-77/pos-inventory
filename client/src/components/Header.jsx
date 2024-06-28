@@ -7,7 +7,7 @@ import { IoNotifications } from "react-icons/io5";
 import ReportModal from "../inventory/ReportModal";
 
 const URL = import.meta.env.VITE_API_URL;
-const LOW_STOCK_THRESHOLD = 20;
+const DEFAULT_CRITICAL_LEVEL = 20; // Default critical level if not set for a product
 
 const Header = ({ toggle, setToggle }) => {
    const location = useLocation();
@@ -49,7 +49,9 @@ const Header = ({ toggle, setToggle }) => {
          try {
             const response = await axios.get(`${URL}/getAll`);
             const allProducts = Object.values(response.data).flat();
-            const lowStockProducts = allProducts.filter(product => product.quantity <= LOW_STOCK_THRESHOLD && product.quantity > 0);
+            const lowStockProducts = allProducts.filter(product => 
+               product.quantity <= (product.criticalLevel || DEFAULT_CRITICAL_LEVEL) && product.quantity > 0
+            );
             const outOfStockProducts = allProducts.filter(product => product.quantity === 0);
             setLowStockCount(lowStockProducts.length);
             setLowStockItems(lowStockProducts);
@@ -130,7 +132,8 @@ const Header = ({ toggle, setToggle }) => {
                      name: item.name,
                      quantity: item.quantity,
                      category: item.category,
-                     price: item.price
+                     price: item.price,
+                     criticalLevel: item.criticalLevel || DEFAULT_CRITICAL_LEVEL
                   }))
                }}
                onClose={() => setShowLowStockReport(false)}
@@ -144,7 +147,8 @@ const Header = ({ toggle, setToggle }) => {
                      name: item.name,
                      quantity: item.quantity,
                      category: item.category,
-                     price: item.price
+                     price: item.price,
+                     criticalLevel: item.criticalLevel || DEFAULT_CRITICAL_LEVEL
                   }))
                }}
                onClose={() => setShowOutOfStockReport(false)}
