@@ -4,10 +4,8 @@ import { MdOutlineDashboard, MdOutlineInventory2 } from "react-icons/md";
 import { TbProgressAlert } from "react-icons/tb";
 import { IoSettingsOutline } from "react-icons/io5";
 import { GrVmMaintenance } from "react-icons/gr";
-import { IoMdHelpCircleOutline } from "react-icons/io";
-import { IoMdInformationCircleOutline } from "react-icons/io";
+import { IoMdHelpCircleOutline, IoMdInformationCircleOutline, IoMdClose } from "react-icons/io";
 import { BiLogOut } from "react-icons/bi";
-import { IoMdClose } from "react-icons/io";
 import PropTypes from "prop-types";
 import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
@@ -24,12 +22,25 @@ const SideNav = ({ toggle, setToggle }) => {
          const decodedToken = jwtDecode(token);
          setUserRole(decodedToken.role);
       }
-   }, []);
+
+      // Add resize event listener
+      const handleResize = () => {
+         if (window.innerWidth >= 768) {
+            setToggle(false);
+         }
+      };
+
+      window.addEventListener('resize', handleResize);
+
+      return () => {
+         window.removeEventListener('resize', handleResize);
+      };
+   }, [setToggle]);
 
    const isActive = (path) => {
       return location.pathname === path
-         ? "bg-gray-300 duration-200 ease-out" // if path is active
-         : "text-gray-600"; // if path is not active
+         ? "bg-gray-300 duration-200 ease-out"
+         : "text-gray-600";
    };
 
    const style = "py-2 px-4 rounded-md font-medium flex items-center";
@@ -40,12 +51,12 @@ const SideNav = ({ toggle, setToggle }) => {
 
    const handleLogout = () => {
       localStorage.removeItem('hasReloaded');
-      localStorage.removeItem('token'); // Remove token from localStorage
-      navigate('/login'); // Navigate to login page
+      localStorage.removeItem('token');
+      navigate('/login');
    };
 
    return (
-      <div className={`p-5 z-10 h-screen flex flex-col justify-between shadow-2xl md:shadow-transparent bg-gray-200 absolute md:static w-[250px] -translate-x-[250px] md:translate-x-0 duration-200 ease-out ${toggle ? "translate-x-0" : ""}`}>
+      <div className={`p-5 z-10 h-screen flex flex-col justify-between shadow-2xl md:shadow-transparent bg-gray-200 fixed md:static w-[250px] -translate-x-[250px] md:translate-x-0 duration-200 ease-out ${toggle ? "translate-x-0" : ""}`}>
          <div>
             <div className="flex items-center justify-between border mb-5">
                <h1 className="font-bold text-lg">GenMed Pharmacy</h1>

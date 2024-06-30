@@ -1,7 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { Printer } from 'lucide-react';
 
 const API_URL = import.meta.env.VITE_API_URL;
 const FAST_MOVING_THRESHOLD = 40;
@@ -14,7 +13,6 @@ const Print = () => {
       weeklyRevenue: 0,
       monthlyRevenue: 0
    });
-   const [products, setProducts] = useState({});
    const [lowStockItems, setLowStockItems] = useState([]);
    const [outOfStockItems, setOutOfStockItems] = useState([]);
    const [fastMovingItems, setFastMovingItems] = useState([]);
@@ -25,8 +23,6 @@ const Print = () => {
       fastMoving: false,
       slowMoving: false
    });
-
-   const printRef = useRef();
 
    useEffect(() => {
       fetchRevenueStatistics();
@@ -47,8 +43,6 @@ const Print = () => {
          const response = await axios.get(`${API_URL}/getAll`);
          const data = response.data;
          const allProducts = Object.values(data).flat();
-
-         setProducts({ ...data, syrup: [...(data.syrup || []), ...(data.syrup2 || [])] });
 
          setLowStockItems(allProducts.filter(p => p.quantity <= (p.criticalLevel || DEFAULT_CRITICAL_LEVEL) && p.quantity > 0));
          setOutOfStockItems(allProducts.filter(p => p.quantity === 0));
@@ -92,15 +86,7 @@ const Print = () => {
    );
 
    const handlePrint = () => {
-      const content = printRef.current;
-      const printWindow = window.open('', '_blank');
-      printWindow.document.write('<html><head><title>Print</title>');
-      printWindow.document.write('<style>body { font-family: Arial, sans-serif; } .no-print { display: none; }</style>');
-      printWindow.document.write('</head><body>');
-      printWindow.document.write(content.innerHTML);
-      printWindow.document.write('</body></html>');
-      printWindow.document.close();
-      printWindow.print();
+      window.print();
    };
 
    const handleCategoryChange = (category) => {
@@ -115,12 +101,11 @@ const Print = () => {
                onClick={handlePrint}
                className="bg-blue-500 shadow-md text-white px-3 py-2 text-sm rounded-md flex items-center space-x-2 no-print"
             >
-               <Printer size={20} />
                <span>Print Report</span>
             </button>
          </div>
 
-         <div ref={printRef}>
+         <div>
             <div className="bg-white p-6 rounded-lg shadow-md mb-8">
                <h2 className="text-xl font-bold mb-4">Revenue Overview</h2>
                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

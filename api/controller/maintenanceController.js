@@ -1,6 +1,4 @@
 const mongoose = require('mongoose');
-const fs = require('fs');
-const path = require('path');
 const UserLog = require('../model/UserLog');
 
 const createBackup = async (req, res) => {
@@ -9,8 +7,10 @@ const createBackup = async (req, res) => {
       const collections = mongoose.connection.collections;
       const backupData = {};
 
-      // Create a new backup collection name with timestamp
-      const backupCollectionName = `backup_${Date.now()}`;
+      // Create a new backup collection name with date and time
+      const now = new Date();
+      const dateTime = now.toISOString().replace(/[:.]/g, '-').slice(0, -5); // Format: YYYY-MM-DDTHH-mm
+      const backupCollectionName = `backup_${dateTime}`;
 
       // Create the new backup collection
       const backupCollection = await mongoose.connection.createCollection(backupCollectionName);
