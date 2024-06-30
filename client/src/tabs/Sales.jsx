@@ -138,7 +138,7 @@ const Sales = () => {
                               <h1 className='font-semibold text-green-600'>Successful</h1>
                            )}
                         </td>
-                        <td className="p-2 whitespace-nowrap">
+                        <td className="p-2 whitespace-nowrap border">
                            <button
                               onClick={() => handleViewReceipt(sale)}
                               className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-[5px] rounded-md text-xs mr-2"

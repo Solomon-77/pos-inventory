@@ -23,7 +23,6 @@ const SideNav = ({ toggle, setToggle }) => {
          setUserRole(decodedToken.role);
       }
 
-      // Add resize event listener
       const handleResize = () => {
          if (window.innerWidth >= 768) {
             setToggle(false);
@@ -56,7 +55,7 @@ const SideNav = ({ toggle, setToggle }) => {
    };
 
    return (
-      <div className={`p-5 z-10 h-screen flex flex-col justify-between shadow-2xl md:shadow-transparent bg-gray-200 fixed md:static w-[250px] -translate-x-[250px] md:translate-x-0 duration-200 ease-out ${toggle ? "translate-x-0" : ""}`}>
+      <div className={`p-5 z-10 h-screen flex flex-col justify-between shadow-2xl md:shadow-transparent bg-gray-200 fixed md:static w-[250px] -translate-x-[250px] md:translate-x-0 duration-200 ease-out ${toggle ? "translate-x-0" : ""} print:hidden`}>
          <div>
             <div className="flex items-center justify-between border mb-5">
                <h1 className="font-bold text-lg">GenMed Pharmacy</h1>
