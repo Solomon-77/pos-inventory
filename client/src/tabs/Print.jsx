@@ -107,9 +107,9 @@ const Print = () => {
             <h1 className="text-xl font-bold">Inventory and Revenue Report</h1>
             <button
                onClick={handlePrint}
-               className="bg-blue-500 shadow-md text-white px-3 py-2 text-sm rounded-md flex items-center space-x-2 no-print"
+               className="bg-blue-500 print:hidden shadow-md text-white px-3 py-2 text-sm rounded-md flex items-center space-x-2 no-print"
             >
-               <span>Print Report</span>
+               <span className='print:hidden'>Print Report</span>
             </button>
          </div>
 
@@ -153,35 +153,39 @@ const Print = () => {
                <div className="flex space-x-4">
                   <label className="flex items-center space-x-2">
                      <input
+                        className='print:hidden'
                         type="checkbox"
                         checked={selectedCategories.lowStock}
                         onChange={() => handleCategoryChange('lowStock')}
                      />
-                     <span>Low Stock</span>
+                     <span className="print:hidden">Low Stock</span>
                   </label>
-                  <label className="flex items-center space-x-2">
+                  <label className="flex items-centeFr space-x-2">
                      <input
+                        className='print:hidden'
                         type="checkbox"
                         checked={selectedCategories.outOfStock}
                         onChange={() => handleCategoryChange('outOfStock')}
                      />
-                     <span>Out of Stock</span>
+                     <span className="print:hidden">Out of Stock</span>
                   </label>
                   <label className="flex items-center space-x-2">
                      <input
+                        className='print:hidden'
                         type="checkbox"
                         checked={selectedCategories.fastMoving}
                         onChange={() => handleCategoryChange('fastMoving')}
                      />
-                     <span>Fast Moving</span>
+                     <span className="print:hidden">Fast Moving</span>
                   </label>
                   <label className="flex items-center space-x-2">
                      <input
+                        className='print:hidden'
                         type="checkbox"
                         checked={selectedCategories.slowMoving}
                         onChange={() => handleCategoryChange('slowMoving')}
                      />
-                     <span>Slow Moving</span>
+                     <span className="print:hidden">Slow Moving</span>
                   </label>
                </div>
             </div>
