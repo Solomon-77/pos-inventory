@@ -86,7 +86,7 @@ const Header = ({ toggle, setToggle }) => {
          <nav className="flex items-center justify-between rounded-lg mb-4">
             <div className='flex items-center'>
                <IoMdMenu onClick={() => setToggle(!toggle)} className="text-4xl print:hidden md:hidden mr-3 cursor-pointer" />
-               <h1 className="font-bold text-lg">{currentPathName}</h1>
+               <h1 className="font-bold text-lg print:hidden">{currentPathName}</h1>
             </div>
             <div className='flex items-center'>
                <div className="relative">
@@ -116,7 +116,7 @@ const Header = ({ toggle, setToggle }) => {
                      </div>
                   )}
                </div>
-               <div className="bg-white flex items-center px-3 py-2 rounded-lg shadow-md">
+               <div className="bg-white print:hidden flex items-center px-3 py-2 rounded-lg shadow-md">
                   <div className="text-sm">
                      <h1 className='font-semibold'>{userInfo.username}</h1>
                      <h1 className='text-gray-500'>{userInfo.role}</h1>

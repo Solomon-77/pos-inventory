@@ -3,11 +3,18 @@ const Receipt = ({ data }) => {
 
    return (
       <div className="max-w-md mx-auto">
-         <h2 className="text-lg font-bold text-center mb-4">Receipt</h2>
-         <p className="text-sm mb-2">Date: {date.toLocaleString()}</p>
-         <p className="text-sm mb-4">Sale ID: {saleId}</p>
+         <h2 className="text-lg font-bold text-center mb-3">Receipt</h2>
 
-         <div className="max-h-[calc(100vh-400px)] overflow-y-auto mb-4">
+         <div className="text-center mb-4">
+            <h3 className="font-bold">GenMed Pharmacy</h3>
+            <p className="text-sm">Blk 1 Lot 34 Daang Bakal, Burgos Rod Rizal</p>
+            <p className="text-sm">Phone: (000) 000-0000</p>
+         </div>
+
+         <p className="text-sm">Date: {date.toLocaleString()}</p>
+         <p className="text-sm mb-1">Sale ID: {saleId}</p>
+
+         <div className="max-h-[calc(100vh-450px)] print:max-h-full overflow-y-auto mb-4">
             <table className="w-full">
                <thead className="sticky top-0 bg-white">
                   <tr className="border-b">

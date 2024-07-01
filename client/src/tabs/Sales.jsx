@@ -18,6 +18,7 @@ const Sales = () => {
    const [showVoidModal, setShowVoidModal] = useState(false);
    const [selectedSaleId, setSelectedSaleId] = useState(null);
    const [voidReason, setVoidReason] = useState("");
+   const [otherReason, setOtherReason] = useState("");
    const [activeTab, setActiveTab] = useState("transactions");
 
    const fetchSales = useCallback(async () => {
@@ -50,15 +51,22 @@ const Sales = () => {
    }, [fetchSales, fetchRevenueStatistics]);
 
    const handleVoidSale = async () => {
-      if (!selectedSaleId || !voidReason) return;
+      if (!selectedSaleId || (!voidReason && !otherReason)) return;
+
+      const finalReason = voidReason === "Other" ? otherReason : voidReason;
+
+      if (!window.confirm("Are you sure you want to void this sale? This action cannot be undone.")) {
+         return;
+      }
 
       try {
-         const response = await axios.post(`${API_URL}/voidSale/${selectedSaleId}`, { reason: voidReason });
+         const response = await axios.post(`${API_URL}/voidSale/${selectedSaleId}`, { reason: finalReason });
          fetchSales();
          setRevenueStats(response.data.revenueStats);
          setShowVoidModal(false);
          setSelectedSaleId(null);
          setVoidReason("");
+         setOtherReason("");
          alert("Sale voided successfully");
       } catch (error) {
          console.error('Error voiding sale:', error);
@@ -79,6 +87,10 @@ const Sales = () => {
    };
 
    const handleReturn = async (saleId) => {
+      if (!window.confirm("Are you sure you want to return these items to inventory?")) {
+         return;
+      }
+
       try {
          const response = await axios.post(`${API_URL}/returnStock/${saleId}`);
          setReturns(prevReturns => prevReturns.map(sale =>
@@ -251,15 +263,26 @@ const Sales = () => {
          </div>
 
          {selectedReceipt && (
-            <div className="fixed z-20 inset-0 p-4 bg-gray-600 bg-opacity-50 flex items-center justify-center">
-               <div className="bg-white p-6 rounded-lg max-w-md w-full">
-                  <Receipt data={selectedReceipt} />
-                  <button
-                     onClick={() => setSelectedReceipt(null)}
-                     className="mt-4 bg-gray-600 hover:bg-gray-700 text-white text-sm py-[5px] px-4 rounded-md"
-                  >
-                     Close
-                  </button>
+            <div className='print:absolute print:h-screen print:w-full print:bg-white print:top-0 print:left-0 print:flex print:justify-center'>
+
+               <div className="fixed print:absolute print:inset-auto print:top-0 z-20 inset-0 p-4 bg-gray-600 bg-opacity-50 flex items-center justify-center print:bg-transparent print:p-0">
+                  <div className="bg-white p-6 rounded-lg max-w-md w-full relative print:shadow-none print:p-0">
+                     <Receipt data={selectedReceipt} />
+                     <div className="mt-4 flex justify-between print:hidden">
+                        <button
+                           onClick={() => setSelectedReceipt(null)}
+                           className="bg-gray-600 hover:bg-gray-700 text-white text-sm py-[5px] px-4 rounded-md"
+                        >
+                           Close
+                        </button>
+                        <button
+                           onClick={() => window.print()}
+                           className="bg-blue-500 hover:bg-blue-600 text-white text-sm px-4 py-[5px] rounded-md"
+                        >
+                           Print
+                        </button>
+                     </div>
+                  </div>
                </div>
             </div>
          )}
@@ -282,8 +305,8 @@ const Sales = () => {
                   </select>
                   {voidReason === "Other" && (
                      <textarea
-                        value={voidReason}
-                        onChange={(e) => setVoidReason(e.target.value)}
+                        value={otherReason}
+                        onChange={(e) => setOtherReason(e.target.value)}
                         placeholder="Please specify the reason"
                         className="w-full outline-none border-gray-500 p-2 border rounded-md mb-4"
                         rows="3"
@@ -295,6 +318,7 @@ const Sales = () => {
                            setShowVoidModal(false);
                            setSelectedSaleId(null);
                            setVoidReason("");
+                           setOtherReason("");
                         }}
                         className="bg-gray-500 hover:bg-gray-600 text-sm text-white px-4 py-2 rounded-md mr-2"
                      >

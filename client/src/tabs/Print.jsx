@@ -98,12 +98,13 @@ const Print = () => {
 
    return (
       <div className="mt-2">
-         <div className="text-center mb-6">
-            <h1 className="text-2xl font-bold">{COMPANY_NAME}</h1>
+         <div className="text-center mb-5">
+            <h1 className="text-xl font-bold">{COMPANY_NAME}</h1>
             <p className="text-gray-600">{COMPANY_ADDRESS}</p>
+            <p className="text-gray-600">Contact No.</p>
          </div>
 
-         <div className="flex justify-between items-center mb-6">
+         <div className="flex justify-between items-center mb-4">
             <h1 className="text-xl font-bold">Inventory and Revenue Report</h1>
             <button
                onClick={handlePrint}
@@ -114,7 +115,7 @@ const Print = () => {
          </div>
 
          <div>
-            <div className="bg-white p-6 rounded-lg shadow-md mb-8">
+            <div className="bg-white p-6 rounded-lg shadow-md mb-6">
                <h2 className="text-xl font-bold mb-4">Revenue Overview</h2>
                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="bg-blue-100 p-4 text-center rounded-lg">
