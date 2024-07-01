@@ -7,6 +7,9 @@ const FAST_MOVING_THRESHOLD = 40;
 const SLOW_MOVING_THRESHOLD = 50;
 const DEFAULT_CRITICAL_LEVEL = 20;
 
+const COMPANY_NAME = "GenMed Pharmacy";
+const COMPANY_ADDRESS = "Blk 1 Lot 34 Daang Bakal, Burgos Rod Rizal";
+
 const Print = () => {
    const [revenueStats, setRevenueStats] = useState({
       dailyRevenue: 0,
@@ -95,6 +98,11 @@ const Print = () => {
 
    return (
       <div className="mt-2">
+         <div className="text-center mb-6">
+            <h1 className="text-2xl font-bold">{COMPANY_NAME}</h1>
+            <p className="text-gray-600">{COMPANY_ADDRESS}</p>
+         </div>
+
          <div className="flex justify-between items-center mb-6">
             <h1 className="text-xl font-bold">Inventory and Revenue Report</h1>
             <button
@@ -141,7 +149,7 @@ const Print = () => {
             </div>
 
             <div className="mb-6 no-print">
-               <h2 className="text-lg font-semibold mb-2">Select categories to include:</h2>
+               <h2 className="text-lg print:hidden font-semibold mb-2">Select categories to include:</h2>
                <div className="flex space-x-4">
                   <label className="flex items-center space-x-2">
                      <input

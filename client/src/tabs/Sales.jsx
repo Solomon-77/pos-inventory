@@ -7,6 +7,7 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 const Sales = () => {
    const [sales, setSales] = useState([]);
+   const [returns, setReturns] = useState([]);
    const [selectedReceipt, setSelectedReceipt] = useState(null);
    const [revenueStats, setRevenueStats] = useState({
       dailyRevenue: 0,
@@ -17,11 +18,13 @@ const Sales = () => {
    const [showVoidModal, setShowVoidModal] = useState(false);
    const [selectedSaleId, setSelectedSaleId] = useState(null);
    const [voidReason, setVoidReason] = useState("");
+   const [activeTab, setActiveTab] = useState("transactions");
 
    const fetchSales = useCallback(async () => {
       try {
          const response = await axios.get(`${API_URL}/getSales`);
          setSales(response.data);
+         setReturns(response.data.filter(sale => sale.status === 'voided'));
       } catch (error) {
          console.error("Error fetching sales:", error);
       }
@@ -47,7 +50,7 @@ const Sales = () => {
    }, [fetchSales, fetchRevenueStatistics]);
 
    const handleVoidSale = async () => {
-      if (!selectedSaleId || !voidReason.trim()) return;
+      if (!selectedSaleId || !voidReason) return;
 
       try {
          const response = await axios.post(`${API_URL}/voidSale/${selectedSaleId}`, { reason: voidReason });
@@ -75,10 +78,46 @@ const Sales = () => {
       });
    };
 
+   const handleReturn = async (saleId) => {
+      try {
+         const response = await axios.post(`${API_URL}/returnStock/${saleId}`);
+         setReturns(prevReturns => prevReturns.map(sale =>
+            sale._id === saleId ? { ...sale, returnedToInventory: true } : sale
+         ));
+         setSales(prevSales => prevSales.map(sale =>
+            sale._id === saleId ? { ...sale, returnedToInventory: true } : sale
+         ));
+         setRevenueStats(response.data.revenueStats);
+         alert("Items returned to inventory successfully");
+      } catch (error) {
+         console.error('Error returning items:', error);
+         alert('Error returning items. Please try again.');
+      }
+   };
+
+   const renderReturnButton = (sale) => {
+      if (sale.returnedToInventory) {
+         return <span className="text-green-600 font-medium">Items Returned</span>;
+      }
+
+      if (sale.voidReason === "Expired Item" || sale.voidReason === "Damaged Item") {
+         return <span className="text-red-600 font-medium">Cannot Return</span>;
+      }
+
+      return (
+         <button
+            onClick={() => handleReturn(sale._id)}
+            className="bg-green-500 hover:bg-green-600 text-white px-2 py-[5px] rounded-md text-xs"
+         >
+            Return to Inventory
+         </button>
+      );
+   };
+
    return (
       <div>
          {userRole !== 'cashier' && (
-            <div className="bg-white p-4 rounded-lg shadow-md">
+            <div className="bg-white p-4 rounded-lg shadow-md mb-4">
                <h2 className="font-bold text-lg mb-4">Revenue Overview</h2>
                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="bg-blue-100 p-4 text-center rounded-lg">
@@ -96,71 +135,119 @@ const Sales = () => {
                </div>
             </div>
          )}
-         <h1 className={`text-lg font-semibold mb-3 ${userRole !== 'cashier' ? 'mt-4' : ''}`}>Transaction History</h1>
-         <div className={`overflow-auto rounded-lg ${userRole === 'cashier' ? 'h-[calc(100vh-150px)]' : 'h-[calc(100vh-330px)]'}`}>
-            <table className="min-w-full bg-white shadow-md">
-               <thead className="bg-gray-100">
-                  <tr>
-                     <th className="py-2 px-4 border font-medium">Date</th>
-                     <th className="py-2 px-4 border font-medium">Total</th>
-                     <th className="py-2 px-4 border font-medium">Discount Type</th>
-                     <th className="py-2 px-4 border font-medium">Items</th>
-                     <th className="py-2 px-4 border font-medium">Order Status</th>
-                     <th className="py-2 px-4 border font-medium">Actions</th>
-                  </tr>
-               </thead>
-               <tbody>
-                  {sales.map((sale) => (
-                     <tr className='text-sm text-center' key={sale._id}>
-                        <td className="py-2 px-4 border">{new Date(sale.date).toLocaleString()}</td>
-                        <td className="py-2 px-4 border">P{sale.total.toFixed(2)}</td>
-                        <td className="py-2 px-4 border">{sale.discountType || 'None'}</td>
-                        <td className="py-2 px-4 border">
-                           <div className="max-h-[60px] overflow-y-auto">
-                              <ul>
-                                 {sale.items.map((item, itemIndex) => (
-                                    <li key={itemIndex}>{item.name} x {item.quantity}</li>
-                                 ))}
-                              </ul>
-                           </div>
-                        </td>
-                        <td className="py-2 px-4 border">
-                           {sale.status === 'voided' ? (
-                              <div>
-                                 <span className="font-semibold text-red-600">Voided</span>
-                                 {sale.voidReason && (
-                                    <p className="text-xs text-gray-500 font-medium mt-1">
-                                       Reason: {sale.voidReason}
-                                    </p>
-                                 )}
-                              </div>
-                           ) : (
-                              <h1 className='font-semibold text-green-600'>Successful</h1>
-                           )}
-                        </td>
-                        <td className="p-2 whitespace-nowrap border">
-                           <button
-                              onClick={() => handleViewReceipt(sale)}
-                              className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-[5px] rounded-md text-xs mr-2"
-                           >
-                              View Receipt
-                           </button>
-                           {sale.status !== 'voided' && (
-                              <button
-                                 onClick={() => {
-                                    setSelectedSaleId(sale._id);
-                                    setShowVoidModal(true);
-                                 }}
-                                 className="bg-red-500 hover:bg-red-600 text-white px-2 py-[5px] rounded-md text-xs"
-                              >
-                                 Void
-                              </button>
-                           )}
-                        </td>
+
+         <div className="flex mb-4">
+            <button
+               className={`mr-2 px-4 py-2 rounded-t-lg ${activeTab === 'transactions' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+               onClick={() => setActiveTab('transactions')}
+            >
+               Transaction History
+            </button>
+            <button
+               className={`px-4 py-2 rounded-t-lg ${activeTab === 'returns' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+               onClick={() => setActiveTab('returns')}
+            >
+               Returns
+            </button>
+         </div>
+
+         <div className={`overflow-auto rounded-lg ${userRole === 'cashier' ? 'h-[calc(100vh-200px)]' : 'h-[calc(100vh-380px)]'}`}>
+            {activeTab === 'transactions' ? (
+               <table className="min-w-full bg-white shadow-md">
+                  <thead className="bg-gray-100">
+                     <tr>
+                        <th className="py-2 px-4 border font-medium">Date</th>
+                        <th className="py-2 px-4 border font-medium">Total</th>
+                        <th className="py-2 px-4 border font-medium">Discount Type</th>
+                        <th className="py-2 px-4 border font-medium">Items</th>
+                        <th className="py-2 px-4 border font-medium">Order Status</th>
+                        <th className="py-2 px-4 border font-medium">Actions</th>
                      </tr>
-                  ))}
-               </tbody>
-            </table>
+                  </thead>
+                  <tbody>
+                     {sales.map((sale) => (
+                        <tr className='text-sm text-center' key={sale._id}>
+                           <td className="py-2 px-4 border">{new Date(sale.date).toLocaleString()}</td>
+                           <td className="py-2 px-4 border">P{sale.total.toFixed(2)}</td>
+                           <td className="py-2 px-4 border">{sale.discountType || 'None'}</td>
+                           <td className="py-2 px-4 border">
+                              <div className="max-h-[60px] overflow-y-auto">
+                                 <ul>
+                                    {sale.items.map((item, itemIndex) => (
+                                       <li key={itemIndex}>{item.name} x {item.quantity}</li>
+                                    ))}
+                                 </ul>
+                              </div>
+                           </td>
+                           <td className="py-2 px-4 border">
+                              {sale.status === 'voided' ? (
+                                 <div>
+                                    <span className="font-semibold text-red-600">Voided</span>
+                                    {sale.voidReason && (
+                                       <p className="text-xs text-gray-500 font-medium mt-1">
+                                          Reason: {sale.voidReason}
+                                       </p>
+                                    )}
+                                 </div>
+                              ) : (
+                                 <span className="font-semibold text-green-600">Successful</span>
+                              )}
+                           </td>
+                           <td className="p-2 whitespace-nowrap border">
+                              <button
+                                 onClick={() => handleViewReceipt(sale)}
+                                 className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-[5px] rounded-md text-xs mr-2"
+                              >
+                                 View Receipt
+                              </button>
+                              {sale.status !== 'voided' && (
+                                 <button
+                                    onClick={() => {
+                                       setSelectedSaleId(sale._id);
+                                       setShowVoidModal(true);
+                                    }}
+                                    className="bg-red-500 hover:bg-red-600 text-white px-2 py-[5px] rounded-md text-xs"
+                                 >
+                                    Void
+                                 </button>
+                              )}
+                           </td>
+                        </tr>
+                     ))}
+                  </tbody>
+               </table>
+            ) : (
+               <table className="min-w-full bg-white shadow-md">
+                  <thead className="bg-gray-100">
+                     <tr>
+                        <th className="py-2 px-4 border font-medium">Date</th>
+                        <th className="py-2 px-4 border font-medium">Items</th>
+                        <th className="py-2 px-4 border font-medium">Reason</th>
+                        <th className="py-2 px-4 border font-medium">Action</th>
+                     </tr>
+                  </thead>
+                  <tbody>
+                     {returns.map((sale) => (
+                        <tr className='text-sm text-center' key={sale._id}>
+                           <td className="py-2 px-4 border">{new Date(sale.date).toLocaleString()}</td>
+                           <td className="py-2 px-4 border">
+                              <div className="max-h-[60px] overflow-y-auto">
+                                 <ul>
+                                    {sale.items.map((item, itemIndex) => (
+                                       <li key={itemIndex}>{item.name} x {item.quantity}</li>
+                                    ))}
+                                 </ul>
+                              </div>
+                           </td>
+                           <td className="py-2 px-4 border">{sale.voidReason}</td>
+                           <td className="p-2 whitespace-nowrap border">
+                              {renderReturnButton(sale)}
+                           </td>
+                        </tr>
+                     ))}
+                  </tbody>
+               </table>
+            )}
          </div>
 
          {selectedReceipt && (
@@ -181,13 +268,27 @@ const Sales = () => {
             <div className="fixed z-20 inset-0 p-4 bg-gray-600 bg-opacity-50 flex items-center justify-center">
                <div className="bg-white p-6 rounded-lg max-w-md w-full">
                   <h2 className="text-lg font-semibold mb-4">Void Sale</h2>
-                  <textarea
+                  <select
                      value={voidReason}
                      onChange={(e) => setVoidReason(e.target.value)}
-                     placeholder="Enter reason for voiding the sale"
                      className="w-full outline-none border-gray-500 p-2 border rounded-md mb-4"
-                     rows="3"
-                  />
+                  >
+                     <option value="">Select a reason</option>
+                     <option value="Expired Item">Expired Item</option>
+                     <option value="Damaged Item">Damaged Item</option>
+                     <option value="Wrong Brand">Wrong Brand</option>
+                     <option value="Wrong Item">Wrong Item</option>
+                     <option value="Other">Other</option>
+                  </select>
+                  {voidReason === "Other" && (
+                     <textarea
+                        value={voidReason}
+                        onChange={(e) => setVoidReason(e.target.value)}
+                        placeholder="Please specify the reason"
+                        className="w-full outline-none border-gray-500 p-2 border rounded-md mb-4"
+                        rows="3"
+                     />
+                  )}
                   <div className="flex justify-end">
                      <button
                         onClick={() => {

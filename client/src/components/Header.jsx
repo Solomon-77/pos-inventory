@@ -85,17 +85,17 @@ const Header = ({ toggle, setToggle }) => {
       <div className="grid grid-rows-[auto,1fr] p-4 overflow-auto">
          <nav className="flex items-center justify-between rounded-lg mb-4">
             <div className='flex items-center'>
-               <IoMdMenu onClick={() => setToggle(!toggle)} className="text-4xl md:hidden mr-3 cursor-pointer" />
+               <IoMdMenu onClick={() => setToggle(!toggle)} className="text-4xl print:hidden md:hidden mr-3 cursor-pointer" />
                <h1 className="font-bold text-lg">{currentPathName}</h1>
             </div>
             <div className='flex items-center'>
                <div className="relative">
                   <IoNotifications
                      onClick={handleNotificationClick}
-                     className='text-2xl mr-6 text-gray-700 cursor-pointer'
+                     className='text-2xl mr-6 text-gray-700 cursor-pointer print:hidden'
                   />
                   {(lowStockCount > 0 || outOfStockCount > 0) && (
-                     <span className="absolute top-0 right-[18px] inline-flex items-center justify-center p-1 text-xs leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
+                     <span className="absolute print:hidden top-0 right-[18px] inline-flex items-center justify-center p-1 text-xs leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
                         {lowStockCount + outOfStockCount}
                      </span>
                   )}

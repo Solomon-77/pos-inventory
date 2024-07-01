@@ -4,9 +4,9 @@ const getSales = async (req, res) => {
    try {
       const sales = await Sale.find()
          .sort({ date: -1 })
-         .select('date total discountType items status amountPaid change voidReason');
+         .select('date total discountType items status amountPaid change voidReason returnedToInventory');
 
-      console.log('Retrieved sales:', sales); // Add this line for debugging
+      console.log('Retrieved sales:', sales); // Keep this line for debugging
 
       res.status(200).json(sales);
    } catch (error) {

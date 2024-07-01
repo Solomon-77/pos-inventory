@@ -93,7 +93,10 @@ const PointOfSale = () => {
 
 
    const removeFromCart = (productId) => {
-      setCart(cart.filter(item => item._id !== productId));
+      const confirmed = window.confirm("Are you sure you want to remove this item from the cart?");
+      if (confirmed) {
+         setCart(cart.filter(item => item._id !== productId));
+      }
    };
 
    const clearCart = () => {

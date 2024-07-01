@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 const Billing = ({ cart, total, onCancel, onConfirm }) => {
    const [amountPaid, setAmountPaid] = useState('');
-   const change = amountPaid ? (parseFloat(amountPaid) - total).toFixed(2) : '0.00';
+   const change = amountPaid ? Math.max(0, (parseFloat(amountPaid) - total)).toFixed(2) : '0.00';
 
    const handleConfirm = () => {
       if (parseFloat(amountPaid) < total) {
@@ -45,13 +45,15 @@ const Billing = ({ cart, total, onCancel, onConfirm }) => {
             <span>P{total.toFixed(2)}</span>
          </div>
 
+         <h1 className='text-center font-bold mb-2'>Payment</h1>
+
          <div className="mb-2">
-            <label className="block mb-2">Amount Paid:</label>
+            <label className="block mb-2">Pay Amount:</label>
             <input
                type="number"
                value={amountPaid}
                onChange={(e) => setAmountPaid(e.target.value)}
-               className="w-full p-2 border rounded text-sm outline-none border border-gray-300"
+               className="w-full p-2 rounded text-sm outline-none border border-gray-300"
             />
          </div>
 

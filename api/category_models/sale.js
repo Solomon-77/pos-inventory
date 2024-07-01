@@ -54,6 +54,10 @@ const saleSchema = new Schema({
    change: {
       type: Number,
       required: true
+   },
+   returnedToInventory: {
+      type: Boolean,
+      default: false
    }
 });
 

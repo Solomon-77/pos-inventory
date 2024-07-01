@@ -48,6 +48,8 @@ const Receipt = ({ data }) => {
             <span>Change:</span>
             <span>P{change.toFixed(2)}</span>
          </div>
+
+         <h1 className="text-center text-gray-500 text-sm italic mb-1 mt-3">THIS RECEIPT IS NOT VALID FOR CLAIMING INPUT TAX.</h1>
       </div>
    );
 };
