@@ -1,4 +1,3 @@
-import React from 'react';
 
 const Receipt = ({ data }) => {
    const { items, total, discountType, date, saleId, amountPaid, change } = data;
@@ -35,8 +34,69 @@ const Receipt = ({ data }) => {
       .receipt-container {
         max-width: 400px;
         margin: 0 auto;
-        padding: 5px;
         box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      }
+      .scrollable-items {
+        max-height: calc(100vh - 500px);
+        min-height: 100px;
+        overflow-y: auto;
+        margin-bottom: 10px;
+      }
+      .receipt-header {
+        text-align: center;
+        margin-bottom: 10px;
+      }
+      .receipt-title {
+        font-weight: bold;
+        font-size: 1.8em;
+        margin-bottom: 15px;
+      }
+      .receipt-info {
+        margin-bottom: 15px;
+      }
+      .receipt-info h3 {
+        font-size: 1.3em;
+        margin-bottom: 10px;
+      }
+      .receipt-info p {
+        margin: 8px 0;
+        font-size: 0.9em;
+      }
+      .transaction-info {
+        text-align: left;
+        margin-top: 15px;
+        font-size: 0.9em;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 15px;
+      }
+      th, td {
+        padding: 8px 4px;
+        border-bottom: 1px solid #ddd;
+      }
+      th {
+        font-weight: bold;
+        text-align: left;
+      }
+      .text-right {
+        text-align: right;
+      }
+      .total-line, .amount-paid, .change {
+        display: flex;
+        justify-content: space-between;
+        margin: 10px 0;
+        font-size: 1.1em;
+      }
+      .change {
+        font-weight: bold;
+      }
+      .footer-text {
+        margin-top: 20px;
+        font-style: italic;
+        font-size: 0.8em;
+        text-align: center;
       }
     }
     @media print {
