@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import axios from 'axios';
 import Receipt from '../sales/Receipt';
 import { jwtDecode } from "jwt-decode";
@@ -20,6 +20,56 @@ const Sales = () => {
    const [voidReason, setVoidReason] = useState("");
    const [otherReason, setOtherReason] = useState("");
    const [activeTab, setActiveTab] = useState("transactions");
+   const receiptRef = useRef(null);
+
+   const handlePrintReceipt = useCallback((event) => {
+      event.preventDefault(); // Prevent default button behavior
+
+      console.log("Print button clicked"); // Add this line for debugging
+
+      if (receiptRef.current) {
+         const printContent = receiptRef.current.innerHTML;
+         console.log("Receipt content:", printContent); // Add this line for debugging
+
+         try {
+            const printWindow = window.open('', '_blank');
+            if (!printWindow) {
+               throw new Error("Couldn't open print window. Please check your pop-up blocker settings.");
+            }
+
+            printWindow.document.write(`
+               <html>
+                  <head>
+                     <title>Print Receipt</title>
+                     <style>
+                        body { font-family: 'Courier New', monospace; font-size: 10pt; }
+                        table { width: 100%; }
+                        th, td { padding: 2px; }
+                        @media print {
+                           @page { size: 80mm 297mm; margin: 0; }
+                           body { width: 72mm; }
+                        }
+                     </style>
+                  </head>
+                  <body>${printContent}</body>
+               </html>
+            `);
+            printWindow.document.close();
+            printWindow.focus();
+
+            setTimeout(() => {
+               printWindow.print();
+               printWindow.close();
+            }, 250); // Small delay to ensure content is loaded before printing
+         } catch (error) {
+            console.error("Error during print process:", error);
+            alert("An error occurred while trying to print. Please try again.");
+         }
+      } else {
+         console.error("Receipt content not found");
+         alert("Unable to print receipt. Please try again.");
+      }
+   }, []);
 
    const fetchSales = useCallback(async () => {
       try {
@@ -264,10 +314,11 @@ const Sales = () => {
 
          {selectedReceipt && (
             <div className='print:absolute print:h-screen print:w-full print:bg-white print:top-0 print:left-0 print:flex print:justify-center'>
-
                <div className="fixed print:absolute print:inset-auto print:top-0 z-20 inset-0 p-4 bg-gray-600 bg-opacity-50 flex items-center justify-center print:bg-transparent print:p-0">
                   <div className="bg-white p-6 rounded-lg max-w-md w-full relative print:shadow-none print:p-0">
-                     <Receipt data={selectedReceipt} />
+                     <div ref={receiptRef}>
+                        <Receipt data={selectedReceipt} />
+                     </div>
                      <div className="mt-4 flex justify-between print:hidden">
                         <button
                            onClick={() => setSelectedReceipt(null)}
@@ -276,10 +327,10 @@ const Sales = () => {
                            Close
                         </button>
                         <button
-                           onClick={() => window.print()}
+                           onClick={handlePrintReceipt}
                            className="bg-blue-500 hover:bg-blue-600 text-white text-sm px-4 py-[5px] rounded-md"
                         >
-                           Print
+                           Print Receipt
                         </button>
                      </div>
                   </div>

@@ -1,63 +1,191 @@
+import React from 'react';
+
 const Receipt = ({ data }) => {
    const { items, total, discountType, date, saleId, amountPaid, change } = data;
 
    return (
-      <div className="max-w-md mx-auto">
-         <h2 className="text-lg font-bold text-center mb-3">Receipt</h2>
+      <>
+         <style>
+            {`
+    .scrollable-items {
+      max-height: calc(100vh - 500px); /* Further reduced height for smaller screens */
+      min-height: 100px;
+      overflow-y: auto;
+      margin-bottom: 10px;
+    }
+    .receipt-header {
+      text-align: center;
+    }
+    .receipt-title {
+      font-weight: bold;
+      font-size: 1.5em;
+      margin-bottom: 10px;
+    }
+    .receipt-info {
+      margin-bottom: 10px;
+    }
+    .receipt-info p {
+      margin: 5px 0;
+    }
+    .transaction-info {
+      text-align: left;
+      margin-top: 10px;
+    }
+    @media screen {
+      .receipt-container {
+        max-width: 400px;
+        margin: 0 auto;
+        padding: 5px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      }
+    }
+    @media print {
+      @page {
+        size: 80mm 297mm;
+        margin: 0;
+      }
+      body {
+        width: 72mm;
+        margin: 0 auto;
+      }
+      .receipt-container {
+        height: auto;
+        overflow: visible;
+        padding: 5mm 0;
+        border: none;
+        box-shadow: none;
+      }
+      .receipt {
+        font-size: 9pt;
+        line-height: 1.2;
+      }
+      .receipt-header {
+        position: static;
+        text-align: center;
+        margin-bottom: 3mm;
+        padding-bottom: 0;
+      }
+      .receipt-title {
+        font-size: 12pt;
+        font-weight: bold;
+        margin-bottom: 2mm;
+      }
+      .receipt-info {
+        font-size: 8pt;
+      }
+      .receipt table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 3mm;
+        border-spacing: 0;
+      }
+      .receipt th, .receipt td {
+        padding: 1mm 0.5mm;
+        border-bottom: 0.5pt solid #ccc;
+        font-size: 8pt;
+      }
+      .receipt th {
+        border-bottom: 0.5pt solid black;
+        font-weight: bold;
+      }
+      .receipt .text-right {
+        text-align: right;
+      }
+      .receipt .total-line {
+        border-top: 0.5pt solid black;
+        padding-top: 1mm;
+        margin-top: 1mm;
+        font-size: 10pt;
+      }
+      .receipt .footer-text {
+        margin-top: 3mm;
+        font-style: italic;
+        font-size: 7pt;
+        text-align: center;
+      }
+      .receipt .item-name {
+        word-break: break-word;
+        max-width: none;
+      }
+      .receipt .unit-price,
+      .receipt .qty,
+      .receipt .item-total {
+        min-width: 12mm;
+        padding-left: 1px;
+        padding-right: 1px;
+      }
+      .scrollable-items {
+        max-height: none;
+        min-height: 0;
+        overflow-y: visible;
+        margin-bottom: 0;
+      }
+    }
+  `}
+         </style>
+         <div className="receipt-container">
+            <div className="receipt">
+               <div className="receipt-header">
+                  <h2 className="receipt-title">Receipt</h2>
+                  <div className="receipt-info">
+                     <h3>GenMed Pharmacy</h3>
+                     <p>Blk 1 Lot 34 Daang Bakal, Burgos Rod Rizal</p>
+                     <p>Phone: (000) 000-0000</p>
+                  </div>
+                  <div className="transaction-info">
+                     <p>Date: {date.toLocaleString()}</p>
+                     <p>Sale ID: {saleId}</p>
+                  </div>
+               </div>
 
-         <div className="text-center mb-4">
-            <h3 className="font-bold">GenMed Pharmacy</h3>
-            <p className="text-sm">Blk 1 Lot 34 Daang Bakal, Burgos Rod Rizal</p>
-            <p className="text-sm">Phone: (000) 000-0000</p>
+               <div className="scrollable-items">
+                  <table>
+                     <thead>
+                        <tr>
+                           <th style={{ textAlign: 'left' }}>Item</th>
+                           <th className="text-right unit-price">Unit Price</th>
+                           <th className="text-right qty">Qty</th>
+                           <th className="text-right item-total">Total</th>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        {items.map((item, index) => (
+                           <tr key={index}>
+                              <td className="item-name">{item.name}</td>
+                              <td className="text-right unit-price">P{item.price.toFixed(2)}</td>
+                              <td className="text-right qty">{item.quantity}</td>
+                              <td className="text-right item-total">P{(item.price * item.quantity).toFixed(2)}</td>
+                           </tr>
+                        ))}
+                     </tbody>
+                  </table>
+               </div>
+
+               <div className="total-line" style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span>Total:</span>
+                  <span>P{total.toFixed(2)}</span>
+               </div>
+
+               {discountType && (
+                  <p>Discount Applied: {discountType}</p>
+               )}
+
+               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span>Amount Paid:</span>
+                  <span>P{amountPaid.toFixed(2)}</span>
+               </div>
+
+               <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold' }}>
+                  <span>Change:</span>
+                  <span>P{change.toFixed(2)}</span>
+               </div>
+
+               <p className="footer-text">
+                  THIS RECEIPT IS NOT VALID FOR CLAIMING INPUT TAX.
+               </p>
+            </div>
          </div>
-
-         <p className="text-sm">Date: {date.toLocaleString()}</p>
-         <p className="text-sm mb-1">Sale ID: {saleId}</p>
-
-         <div className="max-h-[calc(100vh-450px)] print:max-h-full overflow-y-auto mb-4">
-            <table className="w-full">
-               <thead className="sticky top-0 bg-white">
-                  <tr className="border-b">
-                     <th className="text-left py-2">Item</th>
-                     <th className="text-right py-2">Unit Price</th>
-                     <th className="text-right py-2">Qty</th>
-                     <th className="text-right py-2">Total</th>
-                  </tr>
-               </thead>
-               <tbody>
-                  {items.map((item, index) => (
-                     <tr key={index} className="border-b text-sm">
-                        <td className="py-1 w-[150px]">{item.name}</td>
-                        <td className="text-right">P{item.price.toFixed(2)}</td>
-                        <td className="text-right">{item.quantity}</td>
-                        <td className="text-right">P{(item.price * item.quantity).toFixed(2)}</td>
-                     </tr>
-                  ))}
-               </tbody>
-            </table>
-         </div>
-
-         <div className="flex justify-between font-bold mb-2">
-            <span>Total:</span>
-            <span>P{total.toFixed(2)}</span>
-         </div>
-
-         {discountType && (
-            <p className="text-sm mb-2">Discount Applied: {discountType}</p>
-         )}
-
-         <div className="flex justify-between mb-2">
-            <span>Amount Paid:</span>
-            <span>P{amountPaid.toFixed(2)}</span>
-         </div>
-
-         <div className="flex justify-between font-bold">
-            <span>Change:</span>
-            <span>P{change.toFixed(2)}</span>
-         </div>
-
-         <h1 className="text-center text-gray-500 text-sm italic mb-1 mt-3">THIS RECEIPT IS NOT VALID FOR CLAIMING INPUT TAX.</h1>
-      </div>
+      </>
    );
 };
 
