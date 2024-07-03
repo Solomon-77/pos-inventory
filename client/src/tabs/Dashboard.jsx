@@ -75,7 +75,7 @@ const Dashboard = () => {
                </div>
                <div className="bg-purple-100 p-4 text-center rounded-lg flex flex-col justify-center items-center">
                   <h1 className="font-bold text-xl">{dashboardData.topSellingItem}</h1>
-                  <h1 className="text-gray-600 font-medium">Top Selling Item</h1>
+                  <h1 className="text-gray-600 font-medium">Most Sold Item</h1>
                </div>
             </div>
          </div>
