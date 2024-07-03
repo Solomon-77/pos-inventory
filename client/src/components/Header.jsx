@@ -82,7 +82,7 @@ const Header = ({ toggle, setToggle }) => {
    };
 
    return (
-      <div className="grid grid-rows-[auto,1fr] p-4 overflow-auto">
+      <div className="grid grid-rows-[auto,1fr] p-4 overflow-auto print:overflow-hidden">
          <nav className="flex items-center justify-between rounded-lg mb-4">
             <div className='flex items-center'>
                <IoMdMenu onClick={() => setToggle(!toggle)} className="text-4xl print:hidden md:hidden mr-3 cursor-pointer" />
