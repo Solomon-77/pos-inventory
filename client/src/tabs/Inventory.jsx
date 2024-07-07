@@ -262,6 +262,7 @@ const Inventory = () => {
                      </div>
                   )}
                </div>
+               <button className="rounded-md border border-gray-300 px-3 py-2 bg-white text-sm font-medium text-gray-700 ml-2">Archived</button>
             </div>
             <div className="flex space-x-2">
                <button onClick={() => setShowAddForm(!showAddForm)} className="bg-gray-600 shadow-md text-white text-sm px-3 py-2 rounded-md font-medium">Add Product</button>

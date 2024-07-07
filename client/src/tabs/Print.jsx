@@ -105,7 +105,7 @@ const Print = () => {
          <div className="text-center mb-5">
             <h1 className="text-xl font-bold">{COMPANY_NAME}</h1>
             <p className="text-gray-600">{COMPANY_ADDRESS}</p>
-            <p className="text-gray-600">Contact No.</p>
+            <p className="text-gray-600">09215533504</p>
          </div>
 
          <div className="flex justify-between items-center mb-4">

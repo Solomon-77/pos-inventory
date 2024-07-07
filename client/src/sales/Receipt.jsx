@@ -190,7 +190,7 @@ const Receipt = ({ data }) => {
             <div className="receipt-info">
               <h3>GenMed Pharmacy</h3>
               <p>Blk 1 Lot 34 Daang Bakal, Burgos Rod Rizal</p>
-              <p>Phone: (000) 000-0000</p>
+              <p>09215533504</p>
             </div>
             <div className="transaction-info">
               <p>Date: {date.toLocaleString()}</p>
