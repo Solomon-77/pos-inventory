@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "author": "",
   "license": "ISC",
@@ -17,8 +17,10 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "fs": "^0.0.1-security",
+    "jest": "^29.7.0",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.7.0",
+    "mongodb-memory-server": "^9.4.0",
     "mongoose": "^8.4.1",
     "mongoose-ttl": "^0.0.3",
     "nodemailer": "^6.9.13",

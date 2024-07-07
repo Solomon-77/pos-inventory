@@ -52,7 +52,6 @@ const returnStock = async (req, res) => {
       const revenueStats = await recalculateRevenue();
       res.status(200).json({ updatedSale: sale, revenueStats });
    } catch (error) {
-      console.error('Error returning stock:', error);
       res.status(500).json({ message: 'Error returning stock', error: error.message });
    }
 };

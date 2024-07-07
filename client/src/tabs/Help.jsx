@@ -1,7 +1,22 @@
+import { FileDown } from 'lucide-react';
+import manualPdf from './Manual.pdf';
+
 const Help = () => {
    return (
       <div className="p-6 bg-white shadow-lg rounded-lg">
          <h1 className="text-xl font-bold text-gray-600 mb-6">User Manual</h1>
+
+         <section className="mb-6">
+            <h2 className="text-lg font-semibold text-gray-800 mb-3">Full Manual PDF</h2>
+            <a
+               href={manualPdf}
+               download
+               className="inline-flex items-center px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+            >
+               <FileDown className="mr-2" size={20} />
+               Download Full Manual PDF
+            </a>
+         </section>
 
          <section className="mb-6">
             <h2 className="text-lg font-semibold text-gray-800 mb-3">1. Getting Started</h2>

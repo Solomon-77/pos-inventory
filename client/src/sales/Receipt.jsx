@@ -105,7 +105,7 @@ const Receipt = ({ data }) => {
         margin: 0;
       }
       body {
-        width: 56mm;
+        width: 58mm;
         margin: 0 auto;
       }
       .receipt-container {
