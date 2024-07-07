@@ -6,7 +6,6 @@ import ReportModal from "../inventory/ReportModal";
 const API_URL = import.meta.env.VITE_API_URL;
 const CATEGORIES = ["All", "Low Stock", "Out of Stock", "Generic", "Branded", "Syrup", "Antibiotics", "Ointment/Drops", "Cosmetics", "Diapers", "Others"];
 
-
 const FAST_MOVING_THRESHOLD = 40;
 const SLOW_MOVING_THRESHOLD = 50;
 const DEFAULT_CRITICAL_LEVEL = 20;
@@ -23,6 +22,7 @@ const Inventory = () => {
    const [report, setReport] = useState(null);
    const [hasSearched, setHasSearched] = useState(false);
    const [error, setError] = useState("");
+   const [alertMessage, setAlertMessage] = useState("");
 
    useEffect(() => {
       fetchProducts();
@@ -35,6 +35,7 @@ const Inventory = () => {
          setProducts({ ...data, syrup: [...(data.syrup || []), ...(data.syrup2 || [])] });
       } catch (error) {
          console.error("Error fetching products:", error);
+         setAlertMessage("Error fetching products. Please try again.");
       }
    };
 
@@ -81,12 +82,24 @@ const Inventory = () => {
          });
          setEditProduct(null);
          fetchProducts();
+         setAlertMessage("Product updated successfully!");
       } catch (error) {
          console.error("Error updating product:", error);
+         setAlertMessage("Error updating product. Please try again.");
       }
    };
 
    const addProduct = async () => {
+      // Check for empty fields
+      const emptyFields = Object.entries(newProduct)
+         .filter(([key, value]) => key !== 'criticalLevel' && value === '')
+         .map(([key]) => key.charAt(0).toUpperCase() + key.slice(1));
+
+      if (emptyFields.length > 0) {
+         setAlertMessage(`Please fill in the following fields: ${emptyFields.join(', ')}`);
+         return;
+      }
+
       if (!validateInput("price", newProduct.price) ||
          !validateInput("quantity", newProduct.quantity) ||
          !validateInput("criticalLevel", newProduct.criticalLevel)) {
@@ -97,8 +110,10 @@ const Inventory = () => {
          setNewProduct({ name: "", price: "", quantity: "", category: "", criticalLevel: DEFAULT_CRITICAL_LEVEL });
          setShowAddForm(false);
          fetchProducts();
+         setAlertMessage("Product added successfully!");
       } catch (error) {
          console.error("Error adding product:", error);
+         setAlertMessage("Error adding product. Please try again.");
       }
    };
 
@@ -210,6 +225,17 @@ const Inventory = () => {
 
    return (
       <div>
+         {alertMessage && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+               <span className="block sm:inline">{alertMessage}</span>
+               <span className="absolute top-0 bottom-0 right-0 px-4 py-3" onClick={() => setAlertMessage("")}>
+                  <svg className="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                     <title>Close</title>
+                     <path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" />
+                  </svg>
+               </span>
+            </div>
+         )}
          <div className="md:flex justify-between items-center">
             <div className="flex items-center mb-4 md:mb-0 relative">
                <IoSearchOutline className="absolute left-3 text-gray-500" />
