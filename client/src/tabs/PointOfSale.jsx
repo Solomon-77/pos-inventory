@@ -59,7 +59,7 @@ const PointOfSale = () => {
             product.name.toLowerCase().includes(search.toLowerCase())
          );
       }
-
+      filtered.sort((a, b) => a.name.localeCompare(b.name));
       setFilteredProducts(filtered);
    };
 
