@@ -15,9 +15,11 @@ const createBackup = async (req, res) => {
       // Create the new backup collection
       const backupCollection = await mongoose.connection.createCollection(backupCollectionName);
 
+      const excludedCollections = ['userlogs', 'users', 'verificationcodes', 'passwordresets', 'sales'];
+
       for (const [name, collection] of Object.entries(collections)) {
-         // Skip the userlogs collection
-         if (name === 'userlogs') {
+         // Skip the excluded collections and existing backup collections
+         if (excludedCollections.includes(name) || name.startsWith('backup_')) {
             console.log(`Skipping collection: ${name}`);
             continue;
          }
@@ -77,11 +79,13 @@ const restoreBackup = async (req, res) => {
       const backupCollection = mongoose.connection.collection(backupName);
       const backupData = await backupCollection.find({}).toArray();
 
+      const excludedCollections = ['userlogs', 'users', 'verificationcodes', 'passwordresets', 'sales'];
+
       for (const backup of backupData) {
          const { collectionName, data } = backup;
 
-         // Skip restoring the userlogs collection
-         if (collectionName === 'userlogs') {
+         // Skip restoring the excluded collections
+         if (excludedCollections.includes(collectionName)) {
             console.log(`Skipping restoration of collection: ${collectionName}`);
             continue;
          }

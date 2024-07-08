@@ -20,7 +20,7 @@ const baseSchema = {
    criticalLevel: {
       type: Number,
       default: 20
-   }
+   },
 };
 
 const createSchema = (additionalFields = {}) => {

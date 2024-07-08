@@ -4,7 +4,7 @@ import axios from "axios";
 import ReportModal from "../inventory/ReportModal";
 
 const API_URL = import.meta.env.VITE_API_URL;
-const CATEGORIES = ["All", "Low Stock", "Out of Stock", "Generic", "Branded", "Syrup", "Antibiotics", "Ointment/Drops", "Cosmetics", "Diapers", "Others"];
+const CATEGORIES = ["All", "Low Stock", "Out of Stock", "Generic", "Branded", "Syrup", "Antibiotics", "Ointment/Drops", "Cosmetics", "Diapers", "Others"].sort();
 
 const FAST_MOVING_THRESHOLD = 40;
 const SLOW_MOVING_THRESHOLD = 50;
@@ -15,6 +15,7 @@ const Inventory = () => {
    const [isReportDropdownOpen, setIsReportDropdownOpen] = useState(false);
    const [search, setSearch] = useState("");
    const [products, setProducts] = useState({});
+   const [archivedProducts, setArchivedProducts] = useState([]);
    const [category, setCategory] = useState("All");
    const [editProduct, setEditProduct] = useState(null);
    const [newProduct, setNewProduct] = useState({ name: "", price: "", quantity: "", category: "", criticalLevel: DEFAULT_CRITICAL_LEVEL });
@@ -23,19 +24,37 @@ const Inventory = () => {
    const [hasSearched, setHasSearched] = useState(false);
    const [error, setError] = useState("");
    const [alertMessage, setAlertMessage] = useState("");
+   const [showArchived, setShowArchived] = useState(false);
 
    useEffect(() => {
       fetchProducts();
+      fetchArchivedProducts();
    }, []);
 
    const fetchProducts = async () => {
       try {
          const response = await axios.get(`${API_URL}/getAll`);
          const data = response.data;
-         setProducts({ ...data, syrup: [...(data.syrup || []), ...(data.syrup2 || [])] });
+         const sortedData = Object.fromEntries(
+            Object.entries(data).map(([category, items]) => [
+               category,
+               items.sort((a, b) => a.name.localeCompare(b.name))
+            ])
+         );
+         setProducts({ ...sortedData, syrup: [...(sortedData.syrup || []), ...(sortedData.syrup2 || [])].sort((a, b) => a.name.localeCompare(b.name)) });
       } catch (error) {
          console.error("Error fetching products:", error);
          setAlertMessage("Error fetching products. Please try again.");
+      }
+   };
+
+   const fetchArchivedProducts = async () => {
+      try {
+         const response = await axios.get(`${API_URL}/getArchivedProducts`);
+         setArchivedProducts(response.data.sort((a, b) => a.name.localeCompare(b.name)));
+      } catch (error) {
+         console.error("Error fetching archived products:", error);
+         setAlertMessage("Error fetching archived products. Please try again.");
       }
    };
 
@@ -90,7 +109,6 @@ const Inventory = () => {
    };
 
    const addProduct = async () => {
-      // Check for empty fields
       const emptyFields = Object.entries(newProduct)
          .filter(([key, value]) => key !== 'criticalLevel' && value === '')
          .map(([key]) => key.charAt(0).toUpperCase() + key.slice(1));
@@ -127,6 +145,30 @@ const Inventory = () => {
       }
    };
 
+   const archiveProduct = async (product) => {
+      try {
+         await axios.post(`${API_URL}/archiveProduct`, { id: product._id, category: product.category });
+         fetchProducts();
+         fetchArchivedProducts();
+         setAlertMessage("Product archived successfully!");
+      } catch (error) {
+         console.error("Error archiving product:", error);
+         setAlertMessage("Error archiving product. Please try again.");
+      }
+   };
+
+   const unarchiveProduct = async (product) => {
+      try {
+         await axios.post(`${API_URL}/unarchiveProduct`, { id: product._id, category: product.category });
+         fetchProducts();
+         fetchArchivedProducts();
+         setAlertMessage("Product unarchived successfully!");
+      } catch (error) {
+         console.error("Error unarchiving product:", error);
+         setAlertMessage("Error unarchiving product. Please try again.");
+      }
+   };
+
    const filteredProducts = Object.entries(products).flatMap(([cat, items]) => {
       if (category === "All") {
          return items.filter(item => item.name.toLowerCase().includes(search.toLowerCase()));
@@ -150,7 +192,11 @@ const Inventory = () => {
             ? items.filter(item => item.name.toLowerCase().includes(search.toLowerCase()))
             : [];
       }
-   });
+   }).sort((a, b) => a.name.localeCompare(b.name));
+
+   const filteredArchivedProducts = archivedProducts.filter(item =>
+      item.name.toLowerCase().includes(search.toLowerCase())
+   );
 
    const generateReport = (type) => {
       let reportData = [];
@@ -262,7 +308,12 @@ const Inventory = () => {
                      </div>
                   )}
                </div>
-               <button className="rounded-md border border-gray-300 px-3 py-2 bg-white text-sm font-medium text-gray-700 ml-2">Archived</button>
+               <button
+                  className={`rounded-md border border-gray-300 px-3 py-2 bg-white text-sm font-medium text-gray-700 ml-2 ${showArchived ? 'bg-gray-200' : ''}`}
+                  onClick={() => setShowArchived(!showArchived)}
+               >
+                  {showArchived ? 'Active' : 'Archived'}
+               </button>
             </div>
             <div className="flex space-x-2">
                <button onClick={() => setShowAddForm(!showAddForm)} className="bg-gray-600 shadow-md text-white text-sm px-3 py-2 rounded-md font-medium">Add Product</button>
@@ -322,7 +373,7 @@ const Inventory = () => {
             </div>
          )}
 
-         {hasSearched && filteredProducts.length === 0 ? (
+         {hasSearched && (showArchived ? filteredArchivedProducts.length === 0 : filteredProducts.length === 0) ? (
             <div className="text-gray-600 h-[calc(100vh-215px)] grid place-items-center">
                No products found...
             </div>
@@ -337,14 +388,14 @@ const Inventory = () => {
                      </tr>
                   </thead>
                   <tbody className="bg-gray-50">
-                     {filteredProducts.map((product, index) => (
+                     {(showArchived ? filteredArchivedProducts : filteredProducts).map((product, index) => (
                         <tr className="text-center" key={index}>
                            {["name", "price", "quantity", "criticalLevel"].map(field => (
                               <td key={field} className={`border border-gray-200 py-4 break-words px-4 max-w-[100px] text-sm ${field === "quantity" && product[field] <= (product.criticalLevel || DEFAULT_CRITICAL_LEVEL)
                                  ? "text-red-500 font-bold"
                                  : ""
                                  }`}>
-                                 {editProduct?._id === product._id ? (
+                                 {!showArchived && editProduct?._id === product._id ? (
                                     <input
                                        type={field !== "name" ? "number" : "text"}
                                        value={editProduct[field]}
@@ -357,13 +408,20 @@ const Inventory = () => {
                               </td>
                            ))}
                            <td className="border border-gray-200 py-4">
-                              {editProduct && editProduct._id === product._id ? (
-                                 <>
-                                    <button onClick={saveEdit} className="bg-green-500 text-white px-3 py-1 rounded-md text-sm mr-2">Save</button>
-                                    <button onClick={() => setEditProduct(null)} className="bg-red-500 text-white px-3 py-1 rounded-md text-sm">Cancel</button>
-                                 </>
+                              {showArchived ? (
+                                 <button onClick={() => unarchiveProduct(product)} className="bg-green-500 text-white px-3 py-1 rounded-md text-sm mx-2">Unarchive</button>
                               ) : (
-                                 <button onClick={() => startEdit(product)} className="bg-blue-500 text-white px-3 py-1 rounded-md text-sm mx-2">Edit</button>
+                                 editProduct && editProduct._id === product._id ? (
+                                    <>
+                                       <button onClick={saveEdit} className="bg-green-500 text-white px-3 py-1 rounded-md text-sm mr-2">Save</button>
+                                       <button onClick={() => setEditProduct(null)} className="bg-red-500 text-white px-3 py-1 rounded-md text-sm">Cancel</button>
+                                    </>
+                                 ) : (
+                                    <>
+                                       <button onClick={() => startEdit(product)} className="bg-blue-500 text-white px-3 py-1 rounded-md text-sm mx-2">Edit</button>
+                                       <button onClick={() => archiveProduct(product)} className="bg-yellow-500 text-white px-3 py-1 rounded-md text-sm mx-2">Archive</button>
+                                    </>
+                                 )
                               )}
                            </td>
                         </tr>
@@ -374,7 +432,6 @@ const Inventory = () => {
          )}
          {report && <ReportModal report={report} onClose={() => setReport(null)} />}
       </div>
-
    );
 };
 

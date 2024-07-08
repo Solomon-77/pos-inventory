@@ -8,6 +8,7 @@ const { getDashboardData } = require("../product_categories/getDashboardData");
 const { getRevenueStatistics } = require("../product_categories/getRevenueStatistics");
 const { voidSale } = require("../product_categories/voidSale");
 const { returnStock } = require("../product_categories/returnStock");
+const { archiveProduct, unarchiveProduct, getArchivedProducts } = require("../product_categories/archiveProduct");
 
 const dataRoute = require("express").Router();
 
@@ -21,5 +22,8 @@ dataRoute.get("/dashboardData", getDashboardData);
 dataRoute.get("/revenueStatistics", getRevenueStatistics);
 dataRoute.post('/voidSale/:id', voidSale);
 dataRoute.post('/returnStock/:id', returnStock);
+dataRoute.post("/archiveProduct", archiveProduct);
+dataRoute.post("/unarchiveProduct", unarchiveProduct);
+dataRoute.get("/getArchivedProducts", getArchivedProducts);
 
 module.exports = dataRoute;
