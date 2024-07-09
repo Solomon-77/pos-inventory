@@ -60,6 +60,11 @@ const register = async (req, res) => {
    const passwordError = validatePassword(password);
    if (passwordError) return res.status(400).json({ error: passwordError });
 
+   // Check if the roleCode is valid
+   if (!ROLE_CODES[roleCode]) {
+      return res.status(400).json({ error: "Invalid access code" });
+   }
+
    try {
       const existingUser = await User.exists({ email });
       if (existingUser) return res.status(400).json({ error: "Email already taken" });
