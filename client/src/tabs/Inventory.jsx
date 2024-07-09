@@ -361,7 +361,7 @@ const Inventory = () => {
                         className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                      >
                         <option value="">Select Category</option>
-                        {CATEGORIES.filter(cat => cat !== "All" && cat !== "Low Stock").map(cat => (
+                        {CATEGORIES.filter(cat => !["All", "Low Stock", "Out of Stock"].includes(cat)).map(cat => (
                            <option key={cat} value={cat.toLowerCase()}>{cat}</option>
                         ))}
                      </select>
