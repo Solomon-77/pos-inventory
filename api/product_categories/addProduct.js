@@ -13,9 +13,12 @@ const UserLog = require('../model/UserLog');
 
 const addProduct = async (req, res) => {
     try {
+
+        // Validate new product request
         const { category, name, quantity, price, criticalLevel } = req.body;
 
         let Model;
+
         switch (category.toLowerCase()) {
             case 'generic': Model = Generic; break;
             case 'branded': Model = Branded; break;
@@ -30,6 +33,7 @@ const addProduct = async (req, res) => {
                 return res.status(400).json({ error: 'Invalid category' });
         }
 
+        // Save the new product
         const newProduct = new Model({ name, quantity, price, category, criticalLevel });
         await newProduct.save();
 

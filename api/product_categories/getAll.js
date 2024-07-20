@@ -12,6 +12,8 @@ const {
 
 const getAll = async (req, res) => {
    try {
+
+      // Retrieve all products
       const generic = await Generic.find();
       const branded = await Branded.find();
       const syrup = await Syrup.find();

@@ -13,9 +13,10 @@ const {
 
 const checkout = async (req, res) => {
    try {
-      const { cart, discountType, total, amountPaid } = req.body;
 
-      // Create a new sale
+      // Checkout transaction
+      // retrieve cart, discountType, total, amountPaid
+      const { cart, discountType, total, amountPaid } = req.body;
       const newSale = new Sale({
          total,
          discountType,

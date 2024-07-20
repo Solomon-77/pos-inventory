@@ -47,18 +47,14 @@ const archiveProduct = async (req, res) => {
 const unarchiveProduct = async (req, res) => {
    try {
       const { id } = req.body;
-
-      // Find the archived product
       const archivedProduct = await ArchivedProduct.findById(id);
 
       if (!archivedProduct) {
          return res.status(404).json({ error: 'Archived product not found' });
       }
 
-      // Find the appropriate model for the original category
       const Model = mongoose.model(archivedProduct.originalCategory.charAt(0).toUpperCase() + archivedProduct.originalCategory.slice(1));
 
-      // Create a new product in the original collection
       const newProduct = new Model({
          name: archivedProduct.name,
          price: archivedProduct.price,

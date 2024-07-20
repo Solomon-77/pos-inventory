@@ -13,6 +13,8 @@ const UserLog = require('../model/UserLog');
 
 const updateProduct = async (req, res) => {
    try {
+
+      
       const { category, currentName, newName, quantity, price, criticalLevel } = req.body;
 
       let Model;
