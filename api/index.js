@@ -12,11 +12,11 @@ app.use(cors({
 app.use(express.json());
 
 app.get("/", (req, res) => {
-   res.send("Server is running.")
+   res.send("Server is running.");
 });
 
 app.get("/keep-warm", (req, res) => {
-   res.status(200).send("OK")
+   res.status(200).send("OK");
 });
 
 const connectWithRetry = () => {
