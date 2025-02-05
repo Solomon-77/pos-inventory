@@ -2,6 +2,10 @@
 
 Point of Sale and Inventory Management System for [business/company]
 
+## User Interface
+
+![](client/public/POS.png)
+
 ## Members
 
 1. Cristobal, Armani
